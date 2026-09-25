@@ -1,64 +1,60 @@
 # 🧬 MediVision-AI
 
-**MediVision-AI** is a comprehensive, microservice-driven healthcare platform designed to assist medical professionals by combining **Predictive Health Analytics** with **Computer Vision Diagnostics**. 
+**MediVision-AI** is a modular, microservice-driven healthcare platform that combines **Predictive Health Analytics** with **Computer Vision Diagnostics** to assist medical professionals with AI-powered patient risk assessment.
 
-By leveraging multi-modal patient data—ranging from demographic and physiological tabular data to complex medical imaging—MediVision-AI provides a holistic, AI-powered **Comprehensive Health Risk Report** for patients.
+By leveraging multi-modal patient data—ranging from demographic and physiological tabular data to complex medical imaging—MediVision-AI provides a holistic, AI-powered **Comprehensive Health Risk Report**.
 
 ---
 
-## 🏗️ System Architecture & Microservices
-
-The project is designed with a scalable, modular microservices architecture. Each module operates independently but integrates to form a complete clinical diagnostic ecosystem.
+## 🏗️ System Architecture & Modules
 
 ### 1. 📊 Predictive Health Analytics (ML Module)
 **Status:** Active | **Directory:** `notebooks/`, `data/`
 
-This microservice focuses on predicting systemic health conditions using tabular patient data (clinical labs, demographics, physical exams, and lifestyle histories).
-* **Data Source:** CDC NHANES (2017-2020 Pre-Pandemic dataset).
-* **Capabilities:** Predicts the risk of **6 major conditions** simultaneously:
-  1. Diabetes
-  2. Hypertension
-  3. Heart Disease
-  4. Stroke
-  5. Arthritis
-  6. Asthma
-* **Core Technology:** Highly efficient `HistGradientBoostingClassifier` models with strict L2 regularization and depth constraints to prevent overfitting on imbalanced medical data.
+Predicts the risk of **6 chronic diseases simultaneously** from real US population health data (CDC NHANES 2017–2020).
 
-### 2. 👁️ Computer Vision Diagnostics (CV Module)
-**Status:** In Development | **Directory:** `models/`, `notebooks/`
+| Disease | Test ROC-AUC | Test PR-AUC | Positive Rate |
+|---------|:-----------:|:-----------:|:------------:|
+| **Diabetes** | **0.934** | high | ~15% |
+| **Hypertension** | **0.811** | moderate | ~37% |
+| **Heart Disease** | **0.810** | moderate | ~8% |
+| **Arthritis** | **0.782** | moderate | ~31% |
+| **Stroke** | **0.784** | low-moderate | ~5% |
+| **Asthma** | **0.607** | low | ~16% |
 
-This microservice handles the ingestion and diagnostic analysis of medical imagery (e.g., Chest X-Rays for pneumonia, Retinal scans for diabetic retinopathy, or MRIs for tumor detection).
-* **Capabilities:** Image classification, anomaly segmentation, and automated radiology reporting.
-* **Core Technology:** Convolutional Neural Networks (CNNs) and Vision Transformers (ViTs) built with PyTorch or TensorFlow.
+> **ROC-AUC** is the primary metric — it is robust to class imbalance and measures the model's ability to correctly rank sick patients above healthy ones.
 
-### 3. ⚙️ Backend API Service
-**Status:** Planned | **Directory:** `backend/`
-
-The central routing hub that serves the AI models to the frontend applications.
-* **Capabilities:** RESTful endpoints for patient data ingestion, image uploading, executing model inferences, and returning JSON risk reports.
-* **Core Technology:** FastAPI / Flask.
-
-### 4. 🖥️ Frontend User Interface
-**Status:** Planned | **Directory:** `frontend/`
-
-The clinical web dashboard for healthcare providers.
-* **Capabilities:** View patient profiles, upload medical scans, and visualize the generated Unified Health Risk Reports in an intuitive UI.
-* **Core Technology:** React / Vue.js.
+**Key design decisions:**
+- `HistGradientBoostingClassifier` — handles missing lab values natively (no imputation).
+- One model per disease — each tuned individually to its class distribution.
+- `class_weight='balanced'` — corrects for the heavily skewed sick:healthy ratio.
+- Per-disease anti-overfitting hyperparameters (depth, regularization, early stopping).
 
 ---
 
-## 📈 ML Module Performance Metrics
+### 2. ⚙️ Backend API Service
+**Status:** Active | **Directory:** `backend/`
 
-The Predictive Analytics module has been fully implemented and validated on an unseen 20% hold-out test set. We prioritize the **ROC-AUC** metric to properly account for the heavy class imbalances typical in medical datasets.
+A RESTful web service built with **FastAPI**. It loads the serialized machine learning models on startup, accepts 17 patient parameters via HTTP POST requests, and returns JSON risk reports containing exact probability percentages.
 
-| Disease Target | Test ROC-AUC Score | Generalization Check (Overfitting) |
-| :--- | :--- | :--- |
-| **Diabetes** | **0.949** | ✅ Excellent (Stable) |
-| **Hypertension** | **0.819** | ✅ Good (Stable) |
-| **Heart Disease** | **0.800** | ✅ Good (Stable) |
-| **Arthritis** | **0.779** | ✅ Good (Stable) |
-| **Stroke** | **0.776** | ✅ Acceptable (Rare Event) |
-| **Asthma** | **0.635** | ✅ Baseline (Difficult via standard labs) |
+---
+
+### 3. 🖥️ Frontend Clinical Dashboard
+**Status:** Active | **Directory:** `frontend/`
+
+A professional, zero-build clinical web UI built with **Vue 3** and **Tailwind CSS**. 
+- Features a clean 17-parameter input form grouped by clinical categories.
+- Displays 6 dynamic risk cards with progress bars and severity indicators (e.g., <span style="color:red">AT RISK</span> vs <span style="color:green">Low Risk</span>).
+- Includes an "Auto-Fill Sample" feature for rapid testing.
+
+---
+
+### 4. 👁️ Computer Vision Diagnostics
+**Status:** In Development | **Directory:** `models/`, `notebooks/`
+
+Ingestion and diagnostic analysis of medical imagery (chest X-rays, retinal scans, MRIs).
+- **Planned capabilities:** Image classification, anomaly segmentation, automated radiology reporting.
+- **Technology:** CNNs / Vision Transformers (PyTorch or TensorFlow).
 
 ---
 
@@ -66,32 +62,80 @@ The Predictive Analytics module has been fully implemented and validated on an u
 
 ```text
 MediVision-AI/
-├── backend/          # API microservice and routing (FastAPI)
-├── data/             # Raw and processed datasets (NHANES files)
-├── frontend/         # Web dashboard UI for clinical use
-├── models/           # Saved model weights (.pkl, .pt, .h5)
-├── notebooks/        # Jupyter notebooks for EDA, ML training, and CV prototyping
-└── requirements.txt  # Python dependencies
+├── backend/
+│   ├── main.py           # FastAPI application serving the ML models
+│   └── requirements.txt  # API dependencies (FastAPI, Uvicorn, Pydantic)
+├── data/                 # Raw and processed CDC NHANES datasets
+├── frontend/
+│   └── index.html        # Professional Vue + Tailwind clinical dashboard
+├── models/               # Saved model weights (.joblib files)
+├── notebooks/
+│   ├── 01_MediVision_Predictive_Health_Analytics.ipynb
+│   └── NOTEBOOK_GUIDE.md # Detailed explanation of every notebook cell and metric
+├── start_backend.bat     # Windows shortcut to start the FastAPI server
+├── README.md
+└── requirements.txt      # Core Machine Learning dependencies
 ```
 
 ---
 
 ## 🚀 Getting Started
 
+Follow these steps to run the full full-stack application locally.
+
 ### 1. Environment Setup
-Create a virtual environment and install the required dependencies:
+
+Create a virtual environment and install the required dependencies for both the ML pipeline and the backend API:
+
 ```bash
 python -m venv .venv
-source .venv/Scripts/activate  # On Windows: .venv\Scripts\activate
+
+# On Windows:
+.venv\Scripts\activate
+# On macOS / Linux:
+# source .venv/bin/activate
+
+# Install all dependencies
 pip install -r requirements.txt
+pip install -r backend/requirements.txt
 ```
 
-### 2. Running the Predictive Analytics Pipeline
-1. Navigate to the `notebooks/` directory.
-2. Open `01_MediVision_Predictive_Health_Analytics.ipynb` in Jupyter.
-3. The notebook will automatically download the required CDC NHANES datasets into the `data/raw/` directory.
-4. Run the notebook sequentially to:
-   * Execute the data cleaning pipeline.
-   * View Exploratory Data Analysis (EDA) charts.
-   * Train the 6 predictive models.
-   * Generate a sample Comprehensive Patient Risk Report.
+### 2. Generate the AI Models
+
+The backend needs the trained models to exist in the `models/` folder. Open the Jupyter Notebook, run all cells to process the CDC data, and the final cell will save the models automatically:
+
+```bash
+jupyter notebook notebooks/01_MediVision_Predictive_Health_Analytics.ipynb
+```
+
+### 3. Start the Backend API
+
+Run the provided batch script (Windows) to start the FastAPI server:
+
+```bash
+.\start_backend.bat
+```
+*(Alternatively, run: `cd backend && uvicorn main:app --reload`)*
+
+The API will now be running at `http://localhost:8000`. You can view the automatic interactive API documentation at `http://localhost:8000/docs`.
+
+### 4. Launch the Frontend Dashboard
+
+There are no complex Node.js build steps required. Simply open the `index.html` file in your preferred web browser:
+
+1. Navigate to the `frontend/` folder in your file explorer.
+2. Double-click **`index.html`**.
+3. Click **"Auto-Fill Sample"** on the dashboard and hit **"Generate Risk Report"** to see the AI in action!
+
+---
+
+## 📚 Documentation
+
+For a comprehensive explanation of every machine learning design decision, evaluation metric, and data cleaning step, please read the Notebook Guide:
+→ [`notebooks/NOTEBOOK_GUIDE.md`](notebooks/NOTEBOOK_GUIDE.md)
+
+---
+
+## 🔬 Data Provenance
+
+All tabular data comes from the **CDC NHANES (National Health and Nutrition Examination Survey)**, Cycle P (August 2017 – March 2020). Data is publicly available at [wwwn.cdc.gov/nchs/nhanes](https://wwwn.cdc.gov/nchs/nhanes/). Files are downloaded automatically by the scripts; no manual download is required.
