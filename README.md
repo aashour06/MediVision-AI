@@ -1,80 +1,179 @@
-# 🧬 MediVision-AI
+<p align="center">
+  <img src="assets/MediVision - AI.png" alt="MediVision-AI Logo" width="220">
+</p>
 
-**MediVision-AI** is a modular, microservice-driven healthcare platform that combines **Predictive Health Analytics** with **Computer Vision Diagnostics** to assist medical professionals with AI-powered patient risk assessment.
+<h1 align="center">🧬 MediVision-AI</h1>
 
-By leveraging multi-modal patient data—ranging from demographic and physiological tabular data to complex medical imaging—MediVision-AI provides a holistic, AI-powered **Comprehensive Health Risk Report**.
+<p align="center">
+  <strong>Multi-Modal AI Healthcare Intelligence Platform</strong><br>
+  Predictive Health Analytics &bull; Chronic Disease Risk Assessment &bull; Clinical Computer Vision
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.9%2B-3776AB?style=flat&logo=python&logoColor=white" alt="Python 3.9+">
+  <img src="https://img.shields.io/badge/FastAPI-0.110%2B-009688?style=flat&logo=fastapi&logoColor=white" alt="FastAPI">
+  <img src="https://img.shields.io/badge/Vue.js-3.x-4FC08D?style=flat&logo=vuedotjs&logoColor=white" alt="Vue 3">
+  <img src="https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?style=flat&logo=tailwind-css&logoColor=white" alt="Tailwind CSS">
+  <img src="https://img.shields.io/badge/scikit--learn-1.4%2B-F7931E?style=flat&logo=scikit-learn&logoColor=white" alt="scikit-learn">
+  <img src="https://img.shields.io/badge/CDC_NHANES-2017--2020-blue?style=flat" alt="CDC NHANES">
+  <img src="https://img.shields.io/badge/DEPI-Graduation_Project-EA580C?style=flat" alt="DEPI Graduation Project">
+</p>
+
+---
+
+## 📌 Executive Summary
+
+**MediVision-AI** is a modular, clinical-grade healthcare intelligence platform engineered to assist physicians, clinical researchers, and healthcare providers in proactive, data-driven patient risk assessment.
+
+By combining **Predictive Health Analytics** (evaluating 17 physiological and demographic biomarkers from real-world population surveys) with a **RESTful microservice architecture** and a modern, high-readability **Clinical Dashboard**, MediVision-AI provides instant, multi-disease risk profiles before acute clinical escalation.
 
 ---
 
 ## 🏗️ System Architecture & Modules
 
-### 1. 📊 Predictive Health Analytics (ML Module)
-**Status:** Active | **Directory:** `notebooks/`, `data/`
-
-Predicts the risk of **6 chronic diseases simultaneously** from real US population health data (CDC NHANES 2017–2020).
-
-| Disease | Test ROC-AUC | Test PR-AUC | Positive Rate |
-|---------|:-----------:|:-----------:|:------------:|
-| **Diabetes** | **0.934** | high | ~15% |
-| **Hypertension** | **0.811** | moderate | ~37% |
-| **Heart Disease** | **0.810** | moderate | ~8% |
-| **Stroke** | **0.784** | low-moderate | ~5% |
-| **Arthritis** | **0.782** | moderate | ~31% |
-| **Asthma** | **0.607** | low | ~16% |
-
-> **ROC-AUC** is the primary metric — it is robust to class imbalance and measures the model's ability to correctly rank sick patients above healthy ones.
-
-**Key design decisions:**
-- `HistGradientBoostingClassifier` — handles missing lab values natively (no imputation needed).
-- One model per disease — each tuned individually to its class distribution.
-- `class_weight='balanced'` — corrects for the heavily skewed sick:healthy ratio.
-- Per-disease anti-overfitting hyperparameters (depth, regularization, early stopping).
+```
+                    ┌──────────────────────────────────────────────┐
+                    │          CDC NHANES 2017–2020 Data           │
+                    │         (12 Modular SAS .XPT Files)          │
+                    └──────────────────────┬───────────────────────┘
+                                           │
+                                           ▼
+                    ┌──────────────────────────────────────────────┐
+                    │      01_MediVision ML Training Pipeline      │
+                    │   HistGradientBoosting Multi-Disease Engine   │
+                    └──────────────────────┬───────────────────────┘
+                                           │ Serialized Models (.joblib)
+                                           ▼
+                    ┌──────────────────────────────────────────────┐
+                    │             FastAPI Backend API              │
+                    │        (POST /predict • 17 Biomarkers)       │
+                    └──────────────┬───────────────────────────────┘
+                                   │ HTTP JSON (Real-Time)
+                                   ▼
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│                    MediVision-AI Clinical Dashboard (Frontend)                    │
+│  - Warm Medical Orange Theme        - Inline Biomarker Telemetry (17 markers)   │
+│  - Live WHO BMI Categorization      - Dual Patient Presets (High-Risk/Healthy)   │
+│  - 6-Disease Probability Meters     - Clinical Summary Export & Print           │
+└──────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-### 2. ⚙️ Backend API Service
-**Status:** Active | **Directory:** `backend/`
+### 1. 📊 Predictive Health Analytics (Machine Learning Module)
+**Status:** ✅ Active & Operational &bull; **Location:** [`notebooks/`](notebooks/) &bull; [`models/`](models/)
 
-A RESTful web service built with **FastAPI**. It loads the serialized machine learning models on startup, accepts 17 patient parameters via HTTP POST, and returns JSON risk reports containing exact probability percentages.
+The core predictive engine simultaneously analyzes individual risk across **6 major chronic conditions** derived from CDC NHANES Cycle P (2017–2020 Pre-Pandemic) survey data:
 
-**Endpoints:**
+| Chronic Disease | Test ROC-AUC | Test PR-AUC | Population Positive Rate | Clinical Focus |
+|:----------------|:------------:|:-----------:|:-----------------------:|:---------------|
+| **Diabetes** | **0.934** | High | ~15% | Glycemic control & metabolic dysfunction |
+| **Hypertension** | **0.811** | Moderate | ~37% | Cardiovascular tension & arterial health |
+| **Heart Disease** | **0.810** | Moderate | ~8% | Coronary pathology, angina & myocardial infarction |
+| **Stroke** | **0.784** | Low-Mod | ~5% | Cerebrovascular risk & perfusion deficit |
+| **Arthritis** | **0.782** | Moderate | ~31% | Chronic joint inflammation & degeneration |
+| **Asthma** | **0.607** | Low | ~16% | Chronic respiratory airway sensitivity |
 
-| Method | Route | Description |
-|--------|-------|-------------|
-| `GET` | `/` | Health check — confirms the API is running |
-| `POST` | `/predict` | Accepts patient data, returns 6-disease risk profile |
-| `GET` | `/docs` | Auto-generated interactive Swagger UI documentation |
+> **Why ROC-AUC?** ROC-AUC is our primary evaluation metric because it is robust against severe class imbalance (e.g., Stroke at ~5% and Heart Disease at ~8%) and reliably assesses how effectively the models rank high-risk individuals above healthy baselines.
 
-**Patient Input Schema (17 parameters):**
+#### Core Machine Learning Design Decisions:
+- **`HistGradientBoostingClassifier`**: Natively handles missing clinical laboratory values without requiring synthetic imputation.
+- **Dedicated Independent Classifiers**: One tuned gradient boosted tree per disease target to match each condition's distinct class balance.
+- **Class Balancing (`class_weight='balanced'`)**: Corrects for skewed sick-to-healthy prevalence.
+- **Strict Anti-Overfitting Safeguards**: Early stopping with validation score monitoring, constrained max tree depth, and L2 regularization.
 
-| # | Parameter | Type | Category |
-|---|-----------|------|----------|
-| 1 | `age` | float | Demographics |
-| 2 | `gender` | int (1=Male, 2=Female) | Demographics |
-| 3 | `ethnicity` | int (1–7) | Demographics |
-| 4 | `education` | int (1–5) | Demographics |
-| 5 | `income_poverty_ratio` | float | Demographics |
-| 6 | `height_cm` | float | Body Measurements |
-| 7 | `weight_kg` | float | Body Measurements |
-| 8 | `bmi` | float | Body Measurements |
-| 9 | `waist_cm` | float | Body Measurements |
-| 10 | `hba1c` | float (%) | Lab Results |
-| 11 | `fasting_glucose` | float (mg/dL) | Lab Results |
-| 12 | `total_cholesterol` | float (mg/dL) | Lab Results |
-| 13 | `hdl` | float (mg/dL) | Lab Results |
-| 14 | `triglycerides` | float (mg/dL) | Lab Results |
-| 15 | `ldl` | float (mg/dL) | Lab Results |
-| 16 | `ever_smoked` | int (1=Yes, 2=No) | Lifestyle |
-| 17 | `sedentary_minutes` | float | Lifestyle |
+---
 
-**Example Response:**
+### 2. ⚙️ High-Performance Backend API Service
+**Status:** ✅ Active & Operational &bull; **Location:** [`backend/`](backend/)
+
+A lightweight, asynchronous REST microservice built with **FastAPI** and served via **Uvicorn**.
+
+#### API Endpoints:
+
+| Method | Path | Description | Access |
+|:-------|:-----|:------------|:-------|
+| `GET` | `/` | Health check & service readiness probe | Public |
+| `POST` | `/predict` | Ingests 17 biomarkers, returns comprehensive risk scores | Public |
+| `GET` | `/docs` | Interactive Swagger UI API documentation & testing sandbox | Public |
+| `GET` | `/redoc` | OpenAPI ReDoc alternative documentation | Public |
+
+#### Ingested Biomarker Schema (17 Clinical Parameters):
+
+| # | Parameter Name | Data Type | Units / Range | Physiological Category | Normal Clinical Benchmark |
+|:-:|:---------------|:---------:|:-------------:|:-----------------------|:--------------------------|
+| 1 | `age` | `float` | 1 – 120 yrs | Demographics | Adult demographic |
+| 2 | `gender` | `int` | 1 = Male, 2 = Female | Demographics | Biological sex |
+| 3 | `ethnicity` | `int` | 1 – 7 (NHANES code) | Demographics | Demographic category |
+| 4 | `education` | `int` | 1 – 5 scale | Demographics | Socioeconomic factor |
+| 5 | `income_poverty_ratio`| `float` | 0.0 – 5.0+ | Demographics | `< 1.0` denotes poverty threshold |
+| 6 | `height_cm` | `float` | 100 – 230 cm | Anthropometrics | Stature baseline |
+| 7 | `weight_kg` | `float` | 30 – 250 kg | Anthropometrics | Weight baseline |
+| 8 | `bmi` | `float` | 10 – 60 kg/m² | Anthropometrics | WHO standard: `18.5 – 24.9` |
+| 9 | `waist_cm` | `float` | 50 – 180 cm | Anthropometrics | `< 88` (F) / `< 102` (M) cm |
+| 10 | `hba1c` | `float` | % | Laboratory Panel | `< 5.7%` (Normal) |
+| 11 | `fasting_glucose` | `float` | mg/dL | Laboratory Panel | `70 – 99` mg/dL (Fasting) |
+| 12 | `total_cholesterol` | `float` | mg/dL | Laboratory Panel | `< 200` mg/dL |
+| 13 | `hdl` | `float` | mg/dL | Laboratory Panel | `> 40` (M) / `> 50` (F) mg/dL (Good) |
+| 14 | `triglycerides` | `float` | mg/dL | Laboratory Panel | `< 150` mg/dL |
+| 15 | `ldl` | `float` | mg/dL | Laboratory Panel | `< 100` mg/dL (Optimal) |
+| 16 | `ever_smoked` | `int` | 1 = Yes, 2 = No | Lifestyle | Non-smoker baseline |
+| 17 | `sedentary_minutes` | `float` | minutes/day | Lifestyle | Typical: `180 – 360` min/day |
+
+#### Sample Prediction Request:
+```bash
+curl -X POST "http://localhost:8000/predict" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "age": 62, "gender": 2, "ethnicity": 4, "education": 3, "income_poverty_ratio": 1.2,
+    "height_cm": 162, "weight_kg": 92, "bmi": 35.1, "waist_cm": 108,
+    "hba1c": 7.2, "fasting_glucose": 145, "total_cholesterol": 240,
+    "hdl": 35, "triglycerides": 210, "ldl": 160,
+    "ever_smoked": 1, "sedentary_minutes": 480
+  }'
+```
+
+#### Sample Prediction Response:
 ```json
 {
-  "patient_profile": { "age": 55, "bmi": 27.8 },
+  "patient_profile": {
+    "age": 62.0,
+    "bmi": 35.1
+  },
   "predictions": {
     "Diabetes": {
-      "risk_score": 0.12,
-      "risk_percentage": "12.0%",
+      "risk_score": 0.842,
+      "risk_percentage": "84.2%",
+      "prediction": "High Risk",
+      "is_at_risk": true
+    },
+    "Hypertension": {
+      "risk_score": 0.761,
+      "risk_percentage": "76.1%",
+      "prediction": "High Risk",
+      "is_at_risk": true
+    },
+    "Heart Disease": {
+      "risk_score": 0.589,
+      "risk_percentage": "58.9%",
+      "prediction": "High Risk",
+      "is_at_risk": true
+    },
+    "Stroke": {
+      "risk_score": 0.384,
+      "risk_percentage": "38.4%",
+      "prediction": "Low Risk",
+      "is_at_risk": false
+    },
+    "Arthritis": {
+      "risk_score": 0.628,
+      "risk_percentage": "62.8%",
+      "prediction": "High Risk",
+      "is_at_risk": true
+    },
+    "Asthma": {
+      "risk_score": 0.295,
+      "risk_percentage": "29.5%",
       "prediction": "Low Risk",
       "is_at_risk": false
     }
@@ -84,150 +183,197 @@ A RESTful web service built with **FastAPI**. It loads the serialized machine le
 
 ---
 
-### 3. 🖥️ Frontend Clinical Dashboard
-**Status:** Active | **Directory:** `frontend/`
+### 3. 🖥️ Modern Clinical Intelligence Dashboard
+**Status:** ✅ Active & Operational &bull; **Location:** [`frontend/index.html`](frontend/index.html)
 
-A professional, zero-build clinical web UI built with **Vue 3**, **Tailwind CSS**, and **Font Awesome 6** (all via CDN — no Node.js required).
+A browser-native, zero-build clinical dashboard powered by **Vue 3**, **Tailwind CSS**, and **Font Awesome 6**.
 
-**Features:**
-- 🏥 Clean 17-parameter input form grouped by clinical categories (Demographics, Measurements, Lab Results, Lifestyle).
-- 🧮 **Auto-BMI calculation** — BMI is computed automatically when height/weight are entered.
-- 📋 **Auto-Fill Sample** button for rapid testing with a realistic high-risk patient profile.
-- 📊 6 dynamic risk cards with animated progress bars and color-coded severity indicators (<span style="color:red">AT RISK</span> vs <span style="color:green">Low Risk</span>).
-- 📱 Responsive layout — adapts to desktop and mobile screens with automatic scroll-to-results on mobile.
-- 🔄 Loading states with spinner animations and error handling for backend connectivity.
-
----
-
-### 4. 👁️ Computer Vision Diagnostics
-**Status:** In Development | **Directory:** `models/`, `notebooks/`
-
-Ingestion and diagnostic analysis of medical imagery (chest X-rays, retinal scans, MRIs).
-- **Planned capabilities:** Image classification, anomaly segmentation, automated radiology reporting.
-- **Technology:** CNNs / Vision Transformers (PyTorch or TensorFlow).
+#### Key UI/UX Highlights:
+- 🎨 **Medical Orange Brand Palette**: Modern gradient orange identity (`#EA580C`, `#F97316`, `#C2410C`, cream `#FAF7F2`) paired with Google Fonts (*Inter* + *Poppins*).
+- 🏷️ **Integrated Branding Assets**: Displays the official `MediVision - AI.png` medical cross & leaf icon across the header, favicon, and empty-state telemetry displays.
+- 📐 **High-Readability Telemetry Layout**: Generous `max-w-[1420px]` responsive canvas with `1.4rem` card padding, inline input fields, and clear clinical reference labels.
+- 🧮 **Live WHO BMI Classifier**: Automatically recalculates Body Mass Index on height/weight input and applies color-coded WHO chips (*Underweight*, *Normal*, *Overweight*, *Obese*).
+- ⚡ **Dual Sample Data Presets**:
+  - **High-Risk**: Populates a realistic multi-morbid profile (elevated HbA1c, high BMI, dyslipidemia, smoker).
+  - **Healthy**: Populates a normative baseline profile.
+- 📊 **6-Disease Dynamic Risk Grid**: Live probability percentages, animated progress bars, ROC-AUC benchmarks, and clinical monitoring badges.
+- 🖨️ **Print & Export Ready**: Native browser print styling isolates the diagnostic report for patient charts or PDF generation.
+- 🚀 **Zero-Build Architecture**: Can be opened directly via `file:///` double-click in any browser or served through any HTTP server.
 
 ---
 
-## 📂 Project Structure
+### 4. 👁️ Computer Vision Diagnostics (Roadmap)
+**Status:** 🔬 In Development &bull; **Location:** [`models/`](models/) &bull; [`notebooks/`](notebooks/)
+
+An upcoming extension enabling automated imaging diagnostics:
+- **Modalities**: Chest Radiographs (X-Rays), Retinal Fundus Photography, Brain CT/MRI.
+- **Targets**: Cardiomegaly, pulmonary consolidation, diabetic retinopathy staging.
+- **Architecture**: Deep Convolutional Networks (ResNet, EfficientNet) & Vision Transformers (ViT).
+
+---
+
+## 🧪 Testing Presets Reference
+
+The frontend includes dual pre-calibrated sample profiles to demonstrate the predictive pipeline immediately:
+
+| Parameter | High-Risk Preset | Healthy Preset | Normal Reference |
+|:----------|:----------------:|:--------------:|:-----------------|
+| **Age** | 62 yrs | 32 yrs | Adult |
+| **Gender** | Female (2) | Male (1) | — |
+| **Height / Weight** | 162 cm / 92 kg | 178 cm / 72 kg | — |
+| **Calculated BMI** | **35.1 kg/m²** (Obese Class II) | **22.7 kg/m²** (Normal) | 18.5 – 24.9 kg/m² |
+| **Waist Circumference** | **108 cm** | 82 cm | < 88 (F) / < 102 (M) |
+| **HbA1c** | **7.2%** (Diabetic range) | 5.1% | < 5.7% |
+| **Fasting Glucose** | **145 mg/dL** | 88 mg/dL | 70 – 99 mg/dL |
+| **Total Cholesterol** | **240 mg/dL** | 175 mg/dL | < 200 mg/dL |
+| **HDL Cholesterol** | **35 mg/dL** (Low) | 58 mg/dL | > 40 (M) / > 50 (F) |
+| **Triglycerides** | **210 mg/dL** (High) | 95 mg/dL | < 150 mg/dL |
+| **LDL Cholesterol** | **160 mg/dL** (High) | 98 mg/dL | < 100 mg/dL |
+| **Smoking History** | Yes (1) | No (2) | Non-smoker |
+| **Sedentary Time** | **480 min/day** (8 hrs) | 180 min/day (3 hrs) | Minimally sedentary |
+
+---
+
+## 📂 Project Directory Structure
 
 ```text
 MediVision-AI/
+├── assets/
+│   ├── MediVision - AI.png          # Official project logo & branding emblem
+│   └── heart_disease.png            # 3D cardiovascular pathology medical illustration
 ├── backend/
-│   ├── main.py              # FastAPI application serving the ML models
-│   └── requirements.txt     # API dependencies (FastAPI, Uvicorn, scikit-learn, etc.)
+│   ├── main.py                      # FastAPI REST microservice & prediction logic
+│   └── requirements.txt             # API runtime dependencies (FastAPI, Uvicorn, etc.)
 ├── data/
-│   ├── raw/                 # Raw CDC NHANES .xpt files (12 survey modules)
-│   └── processed/           # Cleaned, merged datasets
+│   ├── raw/                         # Raw CDC NHANES .XPT files (12 survey modules)
+│   └── processed/                   # Cleaned, merged tabular clinical datasets
 ├── frontend/
-│   └── index.html           # Vue 3 + Tailwind CSS clinical dashboard (zero-build)
+│   └── index.html                   # Vue 3 + Tailwind CSS clinical dashboard (zero-build)
 ├── models/
-│   ├── trained_models.joblib    # Serialized HistGradientBoosting models (6 diseases)
-│   └── selected_features.joblib # Feature list used during training
+│   ├── trained_models.joblib        # Serialized HistGradientBoosting models (6 diseases)
+│   └── selected_features.joblib     # Pre-selected training feature indices & names
 ├── notebooks/
-│   ├── 01_MediVision_Predictive_Health_Analytics.ipynb  # Full ML pipeline
-│   └── NOTEBOOK_GUIDE.md    # Detailed explanation of every notebook cell and metric
+│   ├── 01_MediVision_Predictive_Health_Analytics.ipynb  # Complete ML pipeline notebook
+│   └── NOTEBOOK_GUIDE.md            # Detailed cell-by-cell notebook explanation
 ├── reports/
-│   └── nhanes_dataset_report.pdf  # Dataset analysis report
-├── start_backend.bat        # Windows shortcut to start the FastAPI server
-├── requirements.txt         # Core ML dependencies (scikit-learn, pandas, matplotlib, etc.)
+│   └── nhanes_dataset_report.pdf    # Comprehensive exploratory dataset analysis report
+├── start_backend.bat                # Windows quick launcher for the backend server
+├── requirements.txt                 # Core data science & ML pipeline dependencies
 ├── .gitignore
-└── README.md
+└── README.md                        # Project documentation (this file)
 ```
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Complete Technology Stack
 
-| Layer | Technology |
-|-------|-----------|
-| **ML / Data Science** | Python · scikit-learn · pandas · NumPy · matplotlib · seaborn · SciPy · XGBoost |
-| **Backend API** | FastAPI · Uvicorn · Pydantic · joblib |
-| **Frontend** | Vue 3 (CDN) · Tailwind CSS (CDN) · Font Awesome 6 |
-| **Data Format** | CDC NHANES `.xpt` (SAS Transport) |
-| **Model Serialization** | joblib (`.joblib`) |
+| Domain | Technologies & Libraries |
+|:-------|:-------------------------|
+| **Data Engineering & ML** | Python 3.9+ &bull; scikit-learn &bull; pandas &bull; NumPy &bull; SciPy &bull; matplotlib &bull; seaborn &bull; XGBoost |
+| **Backend & Microservice** | FastAPI &bull; Uvicorn (ASGI) &bull; Pydantic &bull; joblib |
+| **Frontend UI/UX** | Vue.js 3 &bull; Tailwind CSS &bull; Font Awesome 6 &bull; Google Fonts (*Inter*, *Poppins*) |
+| **Data Standard** | CDC NHANES SAS Transport Format (`.xpt`) Cycle P (2017–2020) |
+| **Model Serialization** | joblib (`.joblib`) binary compression |
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quickstart Guide
 
-Follow these steps to run the full-stack application locally.
+Run the full MediVision-AI stack locally in minutes:
 
 ### Prerequisites
+- Python 3.9 or higher
+- [uv](https://docs.astral.sh/uv/) (recommended for fast package installation) or standard `pip`
+- Modern web browser (Chrome, Edge, Firefox, Safari)
 
-- Python 3.9+
-- [uv](https://docs.astral.sh/uv/) — a fast Python package manager
-- A modern web browser (Chrome, Firefox, Edge)
+---
 
-### 1. Clone & Setup Environment
+### Step 1: Clone the Repository & Setup Environment
 
 ```bash
 git clone https://github.com/<your-username>/MediVision-AI.git
 cd MediVision-AI
 
+# Create virtual environment with uv (or: python -m venv .venv)
 uv venv
 
-# On Windows:
-.venv\Scripts\activate
+# Activate the virtual environment
+# On Windows (PowerShell):
+.venv\Scripts\Activate.ps1
+# On Windows (CMD):
+.venv\Scripts\activate.bat
 # On macOS / Linux:
-# source .venv/bin/activate
+source .venv/bin/activate
 
-# Install all dependencies
+# Install dependencies
 uv pip install -r requirements.txt
 uv pip install -r backend/requirements.txt
 ```
 
-### 2. Generate the AI Models
+---
 
-The backend needs the trained models to exist in the `models/` folder. Open the Jupyter Notebook and run all cells — the final cell saves the models automatically:
+### Step 2: Generate the Model Artifacts (First Time Only)
+
+Ensure `models/trained_models.joblib` and `models/selected_features.joblib` are generated. Launch the notebook and run all cells:
 
 ```bash
 jupyter notebook notebooks/01_MediVision_Predictive_Health_Analytics.ipynb
 ```
 
-> **Note:** The notebook automatically downloads the 12 NHANES data files from the CDC on first run. Subsequent runs skip the download.
+> **Automated Ingestion:** The notebook will automatically download the 12 CDC NHANES survey `.xpt` files on the first execution. Subsequent executions utilize the cached files in `data/raw/`.
 
-### 3. Start the Backend API
+---
 
-**Option A — Windows batch script:**
-```bash
-.\start_backend.bat
+### Step 3: Launch the Backend Microservice
+
+**Option A — Windows Quick Launcher:**
+```cmd
+start_backend.bat
 ```
 
-**Option B — Manual:**
+**Option B — Direct Command:**
 ```bash
 cd backend
-uvicorn main:app --reload
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-The API will be running at `http://localhost:8000`. Visit `http://localhost:8000/docs` for interactive Swagger documentation.
-
-### 4. Launch the Frontend Dashboard
-
-No build step required. Simply open the file in your browser:
-
-1. Navigate to the `frontend/` folder in your file explorer.
-2. Double-click **`index.html`**.
-3. Click **"Auto-Fill Sample"** on the dashboard and hit **"Generate Risk Report"** to see the AI in action!
-
-> **Tip:** The frontend connects to `http://localhost:8000/predict` — make sure the backend is running first.
+Verify service operation:
+- **API Status:** `http://localhost:8000/` &rarr; `{"status": "healthy", ...}`
+- **Interactive Documentation:** `http://localhost:8000/docs`
 
 ---
 
-## 📚 Documentation
+### Step 4: Open the Clinical Dashboard
 
-For a comprehensive explanation of every machine learning design decision, evaluation metric, and data cleaning step, please read the Notebook Guide:
-→ [`notebooks/NOTEBOOK_GUIDE.md`](notebooks/NOTEBOOK_GUIDE.md)
+The frontend is completely zero-build and ready out of the box:
+
+1. Open `frontend/index.html` in your web browser (direct double-click).
+2. Alternatively, serve via Python's built-in web server:
+   ```bash
+   cd frontend
+   python -m http.server 3000
+   ```
+   and navigate to `http://localhost:3000`.
+3. Click the **"High-Risk"** or **"Healthy"** preset buttons, then click **"Generate Risk Report"** to view real-time risk stratification.
 
 ---
 
-## 🔬 Data Provenance
+## 📚 Supplementary Documentation
 
-All tabular data comes from the **CDC NHANES (National Health and Nutrition Examination Survey)**, Cycle P (August 2017 – March 2020). Data is publicly available at [wwwn.cdc.gov/nchs/nhanes](https://wwwn.cdc.gov/nchs/nhanes/).
-
-**12 survey modules** are used covering demographics, body measurements, blood pressure, diabetes, glycohaemoglobin, plasma glucose, HDL cholesterol, medical conditions, physical activity, smoking, total cholesterol, and triglycerides. Files are downloaded automatically by the notebook; no manual download is required.
+- 📖 **[Notebook Guide](notebooks/NOTEBOOK_GUIDE.md)**: In-depth breakdown of every ML step, from NHANES survey weighting to model calibration and threshold selection.
+- 📄 **[Dataset Report](reports/nhanes_dataset_report.pdf)**: Detailed distribution tables and demographic summaries for the Cycle P survey cohort.
 
 ---
 
-## 📄 License
+## 🔬 Data Provenance & Ethics
 
-This project was developed as a graduation project for the **DEPI (Digital Egypt Pioneers Initiative)** program.
+All training data originates from the **National Health and Nutrition Examination Survey (NHANES)** conducted by the National Center for Health Statistics (NCHS), Centers for Disease Control and Prevention (CDC).
+- **Survey Cycle:** Pre-Pandemic 2017–March 2020 (Cycle P).
+- **Public Domain:** Data is publicly accessible at [wwwn.cdc.gov/nchs/nhanes](https://wwwn.cdc.gov/nchs/nhanes/).
+- **Ethical Use:** Used in compliance with NCHS data usage agreements for research and educational purposes.
+
+---
+
+## 🎓 Academic Attribution
+
+This software platform was developed as a Capstone Graduation Project for the **Digital Egypt Pioneers Initiative (DEPI)** under the Ministry of Communications and Information Technology (MCIT), Egypt.

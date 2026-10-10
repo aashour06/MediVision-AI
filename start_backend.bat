@@ -1,4 +1,10 @@
+```bat
 @echo off
 echo Starting MediVision-AI Backend API...
-cd backend
-..\.venv\Scripts\uvicorn.exe main:app --reload
+
+cd /d "%~dp0backend"
+
+uv run --project .. --python "..\.venv\Scripts\python.exe" uvicorn main:app --reload
+
+pause
+```

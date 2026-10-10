@@ -3,10 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediVision AI - Patient Dashboard</title>
-    <!-- Tailwind CSS for styling -->
+    <meta name="description" content="MediVision AI — AI-powered predictive health analytics clinical dashboard for chronic disease risk assessment.">
+    <title>MediVision AI — Clinical Risk Intelligence Dashboard</title>
+    <link rel="icon" type="image/png" href="../assets/MediVision - AI.png" onerror="this.href='assets/MediVision - AI.png'">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Vue.js for reactivity -->
+    <!-- Vue.js -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
@@ -14,227 +19,477 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#1E3A8A', // deep blue
-                        secondary: '#3B82F6',
-                        accent: '#F59E0B',
+                        primary: '#EA580C',
+                        'primary-dark': '#C2410C',
+                        'primary-light': '#FFF7ED',
+                        secondary: '#F97316',
+                        accent: '#9A3412',
                         danger: '#EF4444',
                         success: '#10B981'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F3F4F6; }
-        .card { background: white; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); padding: 1.5rem; }
-        .glass-header { background: rgba(30, 58, 138, 0.95); backdrop-filter: blur(10px); }
-        .progress-bar { transition: width 1s ease-in-out; }
+        body { font-family: 'Inter', sans-serif; background-color: #FAF7F2; }
+        .card { background: white; border-radius: 0.85rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(234,88,12,0.04); padding: 1.4rem; transition: box-shadow 0.3s ease, transform 0.2s ease; }
+        .card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 8px 24px rgba(234,88,12,0.08); }
+        .glass-header { background: linear-gradient(135deg, #C2410C 0%, #EA580C 50%, #F97316 100%); backdrop-filter: blur(10px); }
+        .progress-bar { transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        input:focus, select:focus { border-color: #EA580C !important; box-shadow: 0 0 0 3px rgba(234,88,12,0.18) !important; outline: none; }
+        .btn-primary { background: linear-gradient(135deg, #EA580C, #C2410C); transition: all 0.3s ease; }
+        .btn-primary:hover { background: linear-gradient(135deg, #C2410C, #9A3412); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(234,88,12,0.38); }
+        .pill-btn { transition: all 0.2s ease; }
+        .pill-btn:hover { transform: translateY(-1px); }
+        @media print {
+            header, footer, [class*="lg:w-\[42%\]"], [class*="lg:w-\[44%\]"], [class*="lg:w-1\/3"], button { display: none !important; }
+            [class*="lg:w-\[58%\]"], [class*="lg:w-\[56%\]"], [class*="lg:w-2\/3"] { width: 100% !important; }
+            body { background: white !important; }
+            .card { box-shadow: none !important; border: 1px solid #e5e7eb !important; }
+        }
     </style>
 </head>
 <body>
     <div id="app" class="min-h-screen flex flex-col">
         <!-- Header -->
         <header class="glass-header text-white shadow-lg sticky top-0 z-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-heartbeat text-3xl text-secondary"></i>
-                    <h1 class="text-2xl font-bold tracking-tight">MediVision <span class="font-light text-secondary">AI</span></h1>
+            <div class="max-w-[1420px] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+                <div class="flex items-center space-x-3.5">
+                    <img src="../assets/MediVision - AI.png" onerror="this.src='assets/MediVision - AI.png'" alt="MediVision AI Logo" class="h-11 w-11 rounded-xl shadow-md bg-white p-1 object-contain">
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-display font-bold tracking-tight leading-tight">
+                            MediVision <span class="font-light text-orange-200">AI</span>
+                        </h1>
+                        <p class="text-xs text-orange-100 font-normal tracking-wide hidden sm:block">Predictive Health Analytics Platform &bull; CDC NHANES</p>
+                    </div>
                 </div>
-                <div class="text-sm bg-blue-900 px-3 py-1 rounded-full border border-blue-700">
-                    <i class="fas fa-user-md mr-1"></i> Clinical Dashboard
+                <div class="flex items-center space-x-3">
+                    <div class="text-xs sm:text-sm bg-white/15 px-4 py-1.5 rounded-full border border-white/25 backdrop-blur-sm flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-300 animate-pulse"></span>
+                        <span class="font-semibold">Clinical Diagnostic Suite</span>
+                    </div>
                 </div>
             </div>
         </header>
 
         <!-- Main Content -->
-        <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col lg:flex-row gap-8">
+        <main class="flex-grow max-w-[1420px] mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex flex-col lg:flex-row gap-6 items-stretch">
             
             <!-- Left Column: Input Form -->
-            <div class="w-full lg:w-1/3">
+            <div class="w-full lg:w-[44%] xl:w-[43%] flex flex-col shrink-0">
                 <div class="card border-t-4 border-primary">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-xl font-semibold text-gray-800"><i class="fas fa-clipboard-list text-primary mr-2"></i> Patient Data</h2>
-                        <button @click="fillSampleData" class="text-xs text-secondary hover:text-primary transition font-medium">Auto-Fill Sample</button>
+                    <div class="flex items-center justify-between gap-3 mb-3.5 pb-2.5 border-b border-gray-100">
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-display font-semibold text-gray-800 flex items-center">
+                                <i class="fas fa-clipboard-list text-primary mr-2.5"></i> Patient Biomarkers
+                            </h2>
+                            <p class="text-xs text-gray-500 mt-0.5">17 CDC NHANES clinical indicators</p>
+                        </div>
+                        <div class="flex items-center space-x-2 shrink-0">
+                            <button type="button" @click="fillSampleData" title="Load High Risk Profile" class="pill-btn text-xs sm:text-sm text-primary font-semibold bg-orange-50 hover:bg-orange-100 px-3 py-1.5 rounded-lg border border-orange-200 transition">
+                                <i class="fas fa-triangle-exclamation mr-1.5 text-orange-500 text-xs"></i> High-Risk
+                            </button>
+                            <button type="button" @click="fillHealthyData" title="Load Healthy Baseline" class="pill-btn text-xs sm:text-sm text-emerald-700 font-semibold bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-200 transition">
+                                <i class="fas fa-heart mr-1.5 text-emerald-500 text-xs"></i> Healthy
+                            </button>
+                        </div>
                     </div>
 
-                    <form @submit.prevent="submitPrediction" class="space-y-6">
+                    <form @submit.prevent="submitPrediction" class="space-y-4">
                         
                         <!-- Demographics -->
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3 border-b pb-1">Demographics</h3>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs text-gray-700 font-medium mb-1">Age</label>
-                                    <input type="number" min="1" v-model.number="form.age" class="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-primary focus:ring-primary p-2 border" required>
+                            <h3 class="text-xs sm:text-sm font-bold text-accent uppercase tracking-wider mb-2 border-b border-orange-200/60 pb-1.5 flex items-center justify-between">
+                                <span class="flex items-center"><i class="fas fa-id-card text-primary mr-2 text-sm"></i> Demographics</span>
+                                <span class="text-xs font-normal text-gray-400 lowercase">5 markers</span>
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div class="flex items-center justify-between bg-orange-50/25 px-3 py-2 rounded-lg border border-orange-100/80 hover:border-orange-300 transition">
+                                    <label class="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap mr-2">Age</label>
+                                    <div class="flex items-center space-x-1.5">
+                                        <input type="number" min="1" max="120" v-model.number="form.age" class="w-20 text-right text-xs sm:text-sm font-semibold py-1.5 px-2 border border-gray-200 rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-2xs" required>
+                                        <span class="text-xs text-gray-400 w-5">yr</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-xs text-gray-700 font-medium mb-1">Gender</label>
-                                    <select v-model.number="form.gender" class="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-primary focus:ring-primary p-2 border">
+                                <div class="flex items-center justify-between bg-orange-50/25 px-3 py-2 rounded-lg border border-orange-100/80 hover:border-orange-300 transition">
+                                    <label class="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap mr-2">Gender</label>
+                                    <select v-model.number="form.gender" class="w-28 sm:w-32 text-xs sm:text-sm font-semibold py-1.5 px-2 border border-gray-200 rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-2xs">
                                         <option value="1">Male</option>
                                         <option value="2">Female</option>
                                     </select>
                                 </div>
-                                <div>
-                                    <label class="block text-xs text-gray-700 font-medium mb-1">Ethnicity</label>
-                                    <select v-model.number="form.ethnicity" class="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-primary focus:ring-primary p-2 border">
-                                        <option value="1">Mexican American</option>
+                                <div class="flex items-center justify-between bg-orange-50/25 px-3 py-2 rounded-lg border border-orange-100/80 hover:border-orange-300 transition">
+                                    <label class="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap mr-2">Ethnicity</label>
+                                    <select v-model.number="form.ethnicity" class="w-36 sm:w-40 text-xs sm:text-sm font-semibold py-1.5 px-2 border border-gray-200 rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-2xs">
+                                        <option value="1">Mexican Am.</option>
                                         <option value="2">Other Hispanic</option>
-                                        <option value="3">White</option>
-                                        <option value="4">Black</option>
-                                        <option value="6">Asian</option>
+                                        <option value="3">White (NH)</option>
+                                        <option value="4">Black (NH)</option>
+                                        <option value="6">Asian (NH)</option>
                                         <option value="7">Other/Mixed</option>
                                     </select>
                                 </div>
-                                <div>
-                                    <label class="block text-xs text-gray-700 font-medium mb-1">Education</label>
-                                    <select v-model.number="form.education" class="w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-primary focus:ring-primary p-2 border">
-                                        <option value="1">< 9th Grade</option>
+                                <div class="flex items-center justify-between bg-orange-50/25 px-3 py-2 rounded-lg border border-orange-100/80 hover:border-orange-300 transition">
+                                    <label class="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap mr-2">Education</label>
+                                    <select v-model.number="form.education" class="w-36 sm:w-40 text-xs sm:text-sm font-semibold py-1.5 px-2 border border-gray-200 rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-2xs">
+                                        <option value="1">&lt; 9th Grade</option>
                                         <option value="2">9-11th Grade</option>
                                         <option value="3">High School</option>
                                         <option value="4">Some College</option>
                                         <option value="5">College Grad</option>
                                     </select>
                                 </div>
-                                <div class="col-span-2">
-                                    <label class="block text-xs text-gray-700 font-medium mb-1">Income Poverty Ratio</label>
-                                    <input type="number" step="0.1" v-model.number="form.income_poverty_ratio" class="w-full text-sm border-gray-300 rounded-md shadow-sm p-2 border" required>
+                                <div class="flex items-center justify-between bg-orange-50/25 px-3 py-2 rounded-lg border border-orange-100/80 hover:border-orange-300 transition sm:col-span-2">
+                                    <div class="flex items-center space-x-2">
+                                        <label class="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">Poverty Ratio</label>
+                                        <span class="text-xs text-gray-400">(&lt;1.0 = poverty)</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1.5">
+                                        <input type="number" step="0.01" min="0" max="5" v-model.number="form.income_poverty_ratio" class="w-24 text-right text-xs sm:text-sm font-semibold py-1.5 px-2 border border-gray-200 rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-2xs" required>
+                                        <span class="text-xs text-gray-400 w-6">ratio</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Body Measurements -->
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3 border-b pb-1">Measurements</h3>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs text-gray-700 font-medium mb-1">Height (cm)</label>
-                                    <input type="number" step="0.1" v-model.number="form.height_cm" class="w-full text-sm border-gray-300 rounded-md shadow-sm p-2 border" required>
+                            <h3 class="text-xs sm:text-sm font-bold text-accent uppercase tracking-wider mb-2 border-b border-orange-200/60 pb-1.5 flex items-center justify-between">
+                                <span class="flex items-center"><i class="fas fa-ruler text-primary mr-2 text-sm"></i> Anthropometrics</span>
+                                <span class="text-xs font-normal text-gray-400 lowercase">4 markers</span>
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div class="flex items-center justify-between bg-orange-50/25 px-3 py-2 rounded-lg border border-orange-100/80 hover:border-orange-300 transition">
+                                    <label class="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap mr-2">Height</label>
+                                    <div class="flex items-center space-x-1.5">
+                                        <input type="number" step="0.1" v-model.number="form.height_cm" @input="calcBMI" class="w-20 text-right text-xs sm:text-sm font-semibold py-1.5 px-2 border border-gray-200 rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-2xs" required>
+                                        <span class="text-xs text-gray-400 w-5">cm</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-xs text-gray-700 font-medium mb-1">Weight (kg)</label>
-                                    <input type="number" step="0.1" v-model.number="form.weight_kg" @input="calcBMI" class="w-full text-sm border-gray-300 rounded-md shadow-sm p-2 border" required>
+                                <div class="flex items-center justify-between bg-orange-50/25 px-3 py-2 rounded-lg border border-orange-100/80 hover:border-orange-300 transition">
+                                    <label class="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap mr-2">Weight</label>
+                                    <div class="flex items-center space-x-1.5">
+                                        <input type="number" step="0.1" v-model.number="form.weight_kg" @input="calcBMI" class="w-20 text-right text-xs sm:text-sm font-semibold py-1.5 px-2 border border-gray-200 rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-2xs" required>
+                                        <span class="text-xs text-gray-400 w-5">kg</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-xs text-gray-700 font-medium mb-1">BMI</label>
-                                    <input type="number" step="0.1" v-model.number="form.bmi" class="w-full text-sm bg-gray-50 border-gray-300 rounded-md shadow-sm p-2 border text-gray-500" readonly>
+                                <div class="flex items-center justify-between bg-orange-50/40 px-3 py-2 rounded-lg border border-orange-200/80 transition">
+                                    <div class="flex items-center space-x-2">
+                                        <label class="text-xs sm:text-sm font-bold text-orange-950 whitespace-nowrap">BMI</label>
+                                        <span v-if="form.bmi" :class="bmiBadgeClass" class="text-[10px] sm:text-xs px-1.5 py-0.5 rounded font-bold">{{ bmiCategory }}</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1.5">
+                                        <input type="number" step="0.1" v-model.number="form.bmi" class="w-20 text-right text-xs sm:text-sm font-bold py-1.5 px-2 border border-orange-200 rounded-md bg-white text-orange-950 shadow-2xs" readonly>
+                                        <span class="text-xs text-gray-400 w-7">kg/m²</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-xs text-gray-700 font-medium mb-1">Waist (cm)</label>
-                                    <input type="number" step="0.1" v-model.number="form.waist_cm" class="w-full text-sm border-gray-300 rounded-md shadow-sm p-2 border" required>
+                                <div class="flex items-center justify-between bg-orange-50/25 px-3 py-2 rounded-lg border border-orange-100/80 hover:border-orange-300 transition">
+                                    <label class="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap mr-2">Waist Circ.</label>
+                                    <div class="flex items-center space-x-1.5">
+                                        <input type="number" step="0.1" v-model.number="form.waist_cm" class="w-20 text-right text-xs sm:text-sm font-semibold py-1.5 px-2 border border-gray-200 rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-2xs" required>
+                                        <span class="text-xs text-gray-400 w-5">cm</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Lab Results -->
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3 border-b pb-1">Lab Results</h3>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs text-gray-700 font-medium mb-1">HbA1c (%)</label>
-                                    <input type="number" step="0.1" v-model.number="form.hba1c" class="w-full text-sm border-gray-300 rounded-md shadow-sm p-2 border" required>
+                            <h3 class="text-xs sm:text-sm font-bold text-accent uppercase tracking-wider mb-2 border-b border-orange-200/60 pb-1.5 flex items-center justify-between">
+                                <span class="flex items-center"><i class="fas fa-vial text-primary mr-2 text-sm"></i> Laboratory Panel</span>
+                                <span class="text-xs font-normal text-gray-400 lowercase">6 markers</span>
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div class="flex items-center justify-between bg-orange-50/25 px-3 py-2 rounded-lg border border-orange-100/80 hover:border-orange-300 transition">
+                                    <div class="flex flex-col">
+                                        <label class="text-xs sm:text-sm font-medium text-gray-700 leading-tight">HbA1c</label>
+                                        <span class="text-[10px] text-gray-400">&lt;5.7% norm</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1.5">
+                                        <input type="number" step="0.1" v-model.number="form.hba1c" class="w-20 text-right text-xs sm:text-sm font-semibold py-1.5 px-2 border border-gray-200 rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-2xs" required>
+                                        <span class="text-xs text-gray-400 w-5">%</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-xs text-gray-700 font-medium mb-1">Fasting Glucose</label>
-                                    <input type="number" step="1" v-model.number="form.fasting_glucose" class="w-full text-sm border-gray-300 rounded-md shadow-sm p-2 border" required>
+                                <div class="flex items-center justify-between bg-orange-50/25 px-3 py-2 rounded-lg border border-orange-100/80 hover:border-orange-300 transition">
+                                    <div class="flex flex-col">
+                                        <label class="text-xs sm:text-sm font-medium text-gray-700 leading-tight">Glucose</label>
+                                        <span class="text-[10px] text-gray-400">fasting</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1.5">
+                                        <input type="number" step="1" v-model.number="form.fasting_glucose" class="w-20 text-right text-xs sm:text-sm font-semibold py-1.5 px-2 border border-gray-200 rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-2xs" required>
+                                        <span class="text-xs text-gray-400 w-8">mg/dL</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-xs text-gray-700 font-medium mb-1">Total Chol</label>
-                                    <input type="number" step="1" v-model.number="form.total_cholesterol" class="w-full text-sm border-gray-300 rounded-md shadow-sm p-2 border" required>
+                                <div class="flex items-center justify-between bg-orange-50/25 px-3 py-2 rounded-lg border border-orange-100/80 hover:border-orange-300 transition">
+                                    <div class="flex flex-col">
+                                        <label class="text-xs sm:text-sm font-medium text-gray-700 leading-tight">Total Chol</label>
+                                        <span class="text-[10px] text-gray-400">&lt;200 norm</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1.5">
+                                        <input type="number" step="1" v-model.number="form.total_cholesterol" class="w-20 text-right text-xs sm:text-sm font-semibold py-1.5 px-2 border border-gray-200 rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-2xs" required>
+                                        <span class="text-xs text-gray-400 w-8">mg/dL</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-xs text-gray-700 font-medium mb-1">Triglycerides</label>
-                                    <input type="number" step="1" v-model.number="form.triglycerides" class="w-full text-sm border-gray-300 rounded-md shadow-sm p-2 border" required>
+                                <div class="flex items-center justify-between bg-orange-50/25 px-3 py-2 rounded-lg border border-orange-100/80 hover:border-orange-300 transition">
+                                    <div class="flex flex-col">
+                                        <label class="text-xs sm:text-sm font-medium text-gray-700 leading-tight">Triglycerides</label>
+                                        <span class="text-[10px] text-gray-400">&lt;150 norm</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1.5">
+                                        <input type="number" step="1" v-model.number="form.triglycerides" class="w-20 text-right text-xs sm:text-sm font-semibold py-1.5 px-2 border border-gray-200 rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-2xs" required>
+                                        <span class="text-xs text-gray-400 w-8">mg/dL</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-xs text-gray-700 font-medium mb-1">HDL</label>
-                                    <input type="number" step="1" v-model.number="form.hdl" class="w-full text-sm border-gray-300 rounded-md shadow-sm p-2 border" required>
+                                <div class="flex items-center justify-between bg-orange-50/25 px-3 py-2 rounded-lg border border-orange-100/80 hover:border-orange-300 transition">
+                                    <div class="flex flex-col">
+                                        <label class="text-xs sm:text-sm font-medium text-gray-700 leading-tight">HDL <span class="text-emerald-600 font-semibold">(Good)</span></label>
+                                        <span class="text-[10px] text-gray-400">&gt;40 norm</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1.5">
+                                        <input type="number" step="1" v-model.number="form.hdl" class="w-20 text-right text-xs sm:text-sm font-semibold py-1.5 px-2 border border-gray-200 rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-2xs" required>
+                                        <span class="text-xs text-gray-400 w-8">mg/dL</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-xs text-gray-700 font-medium mb-1">LDL</label>
-                                    <input type="number" step="1" v-model.number="form.ldl" class="w-full text-sm border-gray-300 rounded-md shadow-sm p-2 border" required>
+                                <div class="flex items-center justify-between bg-orange-50/25 px-3 py-2 rounded-lg border border-orange-100/80 hover:border-orange-300 transition">
+                                    <div class="flex flex-col">
+                                        <label class="text-xs sm:text-sm font-medium text-gray-700 leading-tight">LDL <span class="text-rose-600 font-semibold">(Bad)</span></label>
+                                        <span class="text-[10px] text-gray-400">&lt;100 norm</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1.5">
+                                        <input type="number" step="1" v-model.number="form.ldl" class="w-20 text-right text-xs sm:text-sm font-semibold py-1.5 px-2 border border-gray-200 rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-2xs" required>
+                                        <span class="text-xs text-gray-400 w-8">mg/dL</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Lifestyle -->
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3 border-b pb-1">Lifestyle</h3>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs text-gray-700 font-medium mb-1">Ever Smoked?</label>
-                                    <select v-model.number="form.ever_smoked" class="w-full text-sm border-gray-300 rounded-md shadow-sm p-2 border">
+                            <h3 class="text-xs sm:text-sm font-bold text-accent uppercase tracking-wider mb-2 border-b border-orange-200/60 pb-1.5 flex items-center justify-between">
+                                <span class="flex items-center"><i class="fas fa-running text-primary mr-2 text-sm"></i> Lifestyle Factors</span>
+                                <span class="text-xs font-normal text-gray-400 lowercase">2 markers</span>
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div class="flex items-center justify-between bg-orange-50/25 px-3 py-2 rounded-lg border border-orange-100/80 hover:border-orange-300 transition">
+                                    <label class="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap mr-2">Smoker?</label>
+                                    <select v-model.number="form.ever_smoked" class="w-28 sm:w-32 text-xs sm:text-sm font-semibold py-1.5 px-2 border border-gray-200 rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-2xs">
                                         <option value="1">Yes</option>
                                         <option value="2">No</option>
                                     </select>
                                 </div>
-                                <div>
-                                    <label class="block text-xs text-gray-700 font-medium mb-1">Sedentary (min/day)</label>
-                                    <input type="number" v-model.number="form.sedentary_minutes" class="w-full text-sm border-gray-300 rounded-md shadow-sm p-2 border" required>
+                                <div class="flex items-center justify-between bg-orange-50/25 px-3 py-2 rounded-lg border border-orange-100/80 hover:border-orange-300 transition">
+                                    <label class="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap mr-2">Sedentary</label>
+                                    <div class="flex items-center space-x-1.5">
+                                        <input type="number" v-model.number="form.sedentary_minutes" class="w-20 text-right text-xs sm:text-sm font-semibold py-1.5 px-2 border border-gray-200 rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white shadow-2xs" placeholder="360" required>
+                                        <span class="text-xs text-gray-400 w-8">min/d</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Submit -->
-                        <button type="submit" :disabled="loading" class="w-full bg-primary hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg shadow transition flex items-center justify-center">
-                            <span v-if="!loading"><i class="fas fa-magic mr-2"></i> Generate Risk Report</span>
-                            <span v-else><i class="fas fa-circle-notch fa-spin mr-2"></i> Analyzing Data...</span>
+                        <button type="submit" :disabled="loading" class="w-full btn-primary text-white font-bold py-3 px-5 rounded-xl shadow-md text-sm sm:text-base flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed transition mt-2">
+                            <span v-if="!loading"><i class="fas fa-wand-magic-sparkles mr-2 text-sm sm:text-base"></i> Generate Risk Report</span>
+                            <span v-else><i class="fas fa-circle-notch fa-spin mr-2 text-orange-200"></i> Analyzing Data...</span>
                         </button>
-                        <p v-if="error" class="text-danger text-sm text-center font-medium mt-2">{{ error }}</p>
+                        <p v-if="error" class="text-danger text-xs sm:text-sm text-center font-semibold mt-2">{{ error }}</p>
                     </form>
                 </div>
             </div>
 
             <!-- Right Column: Results Dashboard -->
-            <div class="w-full lg:w-2/3">
-                <div v-if="!results" class="card h-full flex flex-col items-center justify-center text-gray-400 min-h-[500px]">
-                    <i class="fas fa-microscope text-6xl mb-4 text-gray-300"></i>
-                    <h2 class="text-xl font-semibold mb-2">Awaiting Patient Data</h2>
-                    <p class="text-center max-w-md">Enter the clinical parameters on the left and click "Generate Risk Report" to view the AI-driven disease probabilities.</p>
-                </div>
+            <div class="w-full lg:w-[56%] xl:w-[57%] lg:flex-1 flex flex-col min-w-0">
                 
-                <div v-else class="space-y-6">
-                    <div class="card bg-gradient-to-r from-primary to-secondary text-white">
-                        <div class="flex items-center justify-between">
+                <!-- Awaiting State -->
+                <div v-if="!results" class="card h-full flex flex-col items-center justify-center text-center p-8 sm:p-10 border border-orange-100">
+                    <div class="relative mb-6">
+                        <div class="w-24 h-24 rounded-2xl bg-orange-50 border-2 border-orange-200/80 p-2.5 shadow-inner flex items-center justify-center">
+                            <img src="../assets/MediVision - AI.png" onerror="this.src='assets/MediVision - AI.png'" alt="MediVision AI" class="w-20 h-20 object-contain drop-shadow">
+                        </div>
+                        <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-4 w-4 bg-primary"></span>
+                        </span>
+                    </div>
+
+                    <h2 class="text-2xl sm:text-3xl font-display font-bold text-gray-800 mb-2">Diagnostic Engine Ready</h2>
+                    <p class="text-sm sm:text-base text-gray-500 max-w-lg mb-6 leading-relaxed">
+                        Input clinical parameters on the left or click <strong class="text-primary font-semibold">"High-Risk"</strong> or <strong class="text-emerald-600 font-semibold">"Healthy"</strong> presets to generate an instant 6-disease risk analysis profile.
+                    </p>
+
+                    <!-- Chronic Disease Capabilities Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full max-w-xl text-left mb-6">
+                        <div class="p-3 rounded-xl border border-gray-100 bg-orange-50/30 flex items-center space-x-3">
+                            <i class="fa-solid fa-droplet text-amber-500 text-xl w-6 text-center"></i>
                             <div>
-                                <h2 class="text-2xl font-bold mb-1">Comprehensive Risk Profile</h2>
-                                <p class="text-blue-100 text-sm">Analyzed successfully based on 17 clinical markers.</p>
+                                <p class="text-xs sm:text-sm font-semibold text-gray-700">Diabetes</p>
+                                <p class="text-xs text-gray-400">AUC 0.934</p>
                             </div>
-                            <div class="text-right">
-                                <p class="text-xs text-blue-200">Patient</p>
-                                <p class="font-semibold text-lg">Age {{ profile.age }} | BMI {{ profile.bmi.toFixed(1) }}</p>
+                        </div>
+                        <div class="p-3 rounded-xl border border-gray-100 bg-orange-50/30 flex items-center space-x-3">
+                            <i class="fa-solid fa-heart-pulse text-rose-500 text-xl w-6 text-center"></i>
+                            <div>
+                                <p class="text-xs sm:text-sm font-semibold text-gray-700">Hypertension</p>
+                                <p class="text-xs text-gray-400">AUC 0.811</p>
+                            </div>
+                        </div>
+                        <div class="p-3 rounded-xl border border-orange-200/60 bg-orange-50/40 flex items-center space-x-3 shadow-2xs">
+                            <img src="../assets/heart_disease.png" onerror="this.src='assets/heart_disease.png'" alt="Heart Disease" class="w-7 h-7 object-contain rounded drop-shadow-xs">
+                            <div>
+                                <p class="text-xs sm:text-sm font-bold text-gray-800">Heart Disease</p>
+                                <p class="text-xs text-orange-600 font-semibold">AUC 0.810</p>
+                            </div>
+                        </div>
+                        <div class="p-3 rounded-xl border border-gray-100 bg-orange-50/30 flex items-center space-x-3">
+                            <i class="fa-solid fa-brain text-purple-600 text-xl w-6 text-center"></i>
+                            <div>
+                                <p class="text-xs sm:text-sm font-semibold text-gray-700">Stroke</p>
+                                <p class="text-xs text-gray-400">AUC 0.784</p>
+                            </div>
+                        </div>
+                        <div class="p-3 rounded-xl border border-gray-100 bg-orange-50/30 flex items-center space-x-3">
+                            <i class="fa-solid fa-bone text-orange-500 text-xl w-6 text-center"></i>
+                            <div>
+                                <p class="text-xs sm:text-sm font-semibold text-gray-700">Arthritis</p>
+                                <p class="text-xs text-gray-400">AUC 0.782</p>
+                            </div>
+                        </div>
+                        <div class="p-3 rounded-xl border border-gray-100 bg-orange-50/30 flex items-center space-x-3">
+                            <i class="fa-solid fa-lungs text-sky-500 text-xl w-6 text-center"></i>
+                            <div>
+                                <p class="text-xs sm:text-sm font-semibold text-gray-700">Asthma</p>
+                                <p class="text-xs text-gray-400">AUC 0.607</p>
                             </div>
                         </div>
                     </div>
 
+                    <div class="flex items-center space-x-2 text-xs text-gray-400">
+                        <i class="fas fa-shield-halved text-orange-400 text-sm"></i>
+                        <span>CDC NHANES 2017–2020 Multi-Disease Gradient Boosting Pipeline</span>
+                    </div>
+                </div>
+                
+                <!-- Results State -->
+                <div v-else class="space-y-5 fade-in">
+                    
+                    <!-- Top Summary Card -->
+                    <div class="card p-5 sm:p-6" style="background: linear-gradient(135deg, #C2410C 0%, #EA580C 50%, #F97316 100%); color: white;">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div>
+                                <div class="flex items-center space-x-2.5">
+                                    <span class="bg-white/20 text-white text-xs font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full backdrop-blur-sm">
+                                        Clinical Assessment
+                                    </span>
+                                    <span class="text-orange-200 text-xs sm:text-sm font-medium">ID #MV-{{ Math.abs(Math.floor(profile.age * 137 + profile.bmi * 43)) }}</span>
+                                </div>
+                                <h2 class="text-2xl sm:text-3xl font-display font-bold mt-1.5 tracking-tight">Multi-Disease Risk Profile</h2>
+                                <p class="text-orange-100 text-xs sm:text-sm mt-1">
+                                    Evaluated against 17 biomarkers &bull; {{ atRiskCount }} of 6 chronic conditions flagged as elevated
+                                </p>
+                            </div>
+
+                            <div class="flex items-center space-x-4 bg-white/10 px-4.5 py-2.5 rounded-xl border border-white/20 backdrop-blur-sm self-start sm:self-auto">
+                                <div class="text-right">
+                                    <p class="text-[11px] text-orange-200 uppercase font-semibold">Patient Profile</p>
+                                    <p class="font-bold text-base sm:text-lg leading-tight">Age {{ profile.age }} &bull; BMI {{ profile.bmi.toFixed(1) }}</p>
+                                </div>
+                                <button @click="printReport" title="Print Clinical Summary" class="bg-white text-primary hover:bg-orange-50 font-semibold px-3.5 py-2 rounded-lg shadow-sm text-xs sm:text-sm transition flex items-center space-x-1.5">
+                                    <i class="fas fa-print"></i>
+                                    <span>Print</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6 Disease Cards Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div v-for="(data, disease) in results" :key="disease" class="card border-l-4" :class="data.is_at_risk ? 'border-danger' : 'border-success'">
-                            <div class="flex justify-between items-start mb-4">
-                                <h3 class="text-lg font-bold text-gray-800">{{ disease }}</h3>
-                                <span class="px-2 py-1 text-xs font-bold rounded-md" :class="data.is_at_risk ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'">
-                                    <i class="fas mr-1" :class="data.is_at_risk ? 'fa-exclamation-triangle' : 'fa-check-circle'"></i>
+                        <div v-for="(data, disease) in results" :key="disease" 
+                             class="card p-5 border-l-4 transition hover:-translate-y-0.5" 
+                             :class="data.is_at_risk ? 'border-danger hover:border-red-600' : 'border-success hover:border-emerald-600'">
+                            
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-gray-50 border border-gray-100 overflow-hidden shadow-2xs">
+                                        <img v-if="disease === 'Heart Disease'" src="../assets/heart_disease.png" onerror="this.src='assets/heart_disease.png'" alt="Heart Disease" class="w-8 h-8 object-contain">
+                                        <i v-else :class="getDiseaseIcon(disease)" class="text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-base sm:text-lg font-bold text-gray-800 leading-tight">{{ disease }}</h3>
+                                        <p class="text-xs text-gray-400">ROC-AUC: {{ getDiseaseAUC(disease) }}</p>
+                                    </div>
+                                </div>
+
+                                <span class="px-3 py-1 text-xs font-bold rounded-full tracking-wide flex items-center" 
+                                      :class="data.is_at_risk ? 'bg-red-50 text-danger border border-red-200' : 'bg-emerald-50 text-success border border-emerald-200'">
+                                    <i class="fas mr-1.5 text-[10px]" :class="data.is_at_risk ? 'fa-triangle-exclamation' : 'fa-circle-check'"></i>
                                     {{ data.prediction }}
                                 </span>
                             </div>
                             
-                            <div class="flex items-end justify-between mb-2">
-                                <span class="text-4xl font-extrabold tracking-tight" :class="data.is_at_risk ? 'text-danger' : 'text-gray-700'">
-                                    {{ data.risk_percentage }}
+                            <div class="flex items-baseline justify-between mb-2">
+                                <div class="flex items-baseline space-x-1.5">
+                                    <span class="text-3xl sm:text-4xl font-extrabold tracking-tight" :class="data.is_at_risk ? 'text-danger' : 'text-gray-800'">
+                                        {{ data.risk_percentage }}
+                                    </span>
+                                    <span class="text-xs sm:text-sm text-gray-400">predicted risk</span>
+                                </div>
+                                <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                    Threshold: 50%
                                 </span>
-                                <span class="text-xs text-gray-500 font-medium uppercase">Risk Score</span>
                             </div>
 
-                            <div class="w-full bg-gray-200 rounded-full h-2.5 mt-3 overflow-hidden">
+                            <!-- Progress Bar -->
+                            <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden relative">
                                 <div class="h-2.5 rounded-full progress-bar" 
-                                     :class="data.is_at_risk ? 'bg-danger' : 'bg-success'" 
-                                     :style="`width: ${data.risk_score * 100}%`">
+                                     :class="data.is_at_risk ? 'bg-gradient-to-r from-orange-500 to-red-500' : 'bg-gradient-to-r from-emerald-400 to-emerald-500'" 
+                                     :style="`width: ${Math.min(data.risk_score * 100, 100)}%`">
                                 </div>
+                            </div>
+
+                            <div class="mt-2.5 flex justify-between items-center text-xs text-gray-500 pt-2 border-t border-gray-50">
+                                <span>Status: <strong :class="data.is_at_risk ? 'text-red-600' : 'text-emerald-700'">{{ data.is_at_risk ? 'Elevated Monitoring Required' : 'Within Expected Baseline' }}</strong></span>
+                                <span class="text-[11px] text-gray-400">Score: {{ (data.risk_score).toFixed(3) }}</span>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Clinical Footnote Card -->
+                    <div class="p-4 rounded-xl bg-orange-50/40 border border-orange-100 flex items-start space-x-3 text-xs sm:text-sm text-gray-600">
+                        <i class="fas fa-circle-info text-primary text-base sm:text-lg mt-0.5"></i>
+                        <p class="leading-relaxed">
+                            <strong>Interpretation Note:</strong> Risk scores reflect predicted probability derived from HistGradientBoosting models trained on 12 CDC NHANES survey modules. A probability exceeding 50% flags the individual as clinically at-risk for diagnostic follow-up.
+                        </p>
+                    </div>
+
                 </div>
             </div>
 
         </main>
+
+        <!-- Footer -->
+        <footer class="mt-auto border-t border-orange-100 bg-white/70 py-5 text-center text-xs sm:text-sm text-gray-500">
+            <div class="max-w-[1420px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="flex items-center space-x-2.5">
+                    <img src="../assets/MediVision - AI.png" onerror="this.src='assets/MediVision - AI.png'" alt="MediVision AI" class="h-6 w-6 object-contain">
+                    <span class="font-semibold text-gray-700">MediVision-AI</span>
+                    <span>&bull; Predictive Health Analytics</span>
+                </div>
+                <p>Digital Egypt Pioneers Initiative (DEPI) Graduation Project &bull; CDC NHANES 2017–2020</p>
+                <div class="flex items-center space-x-3">
+                    <a href="http://localhost:8000/docs" target="_blank" class="text-primary hover:underline font-semibold flex items-center">
+                        <i class="fas fa-code mr-1.5"></i> API Docs
+                    </a>
+                </div>
+            </div>
+        </footer>
+
     </div>
 
     <script>
@@ -268,6 +523,28 @@
                     }
                 }
             },
+            computed: {
+                bmiCategory() {
+                    const bmi = this.form.bmi;
+                    if (!bmi || bmi <= 0) return '';
+                    if (bmi < 18.5) return 'Underweight';
+                    if (bmi < 25.0) return 'Normal (WHO)';
+                    if (bmi < 30.0) return 'Overweight';
+                    return 'Obese (High)';
+                },
+                bmiBadgeClass() {
+                    const bmi = this.form.bmi;
+                    if (!bmi || bmi <= 0) return '';
+                    if (bmi < 18.5) return 'bg-blue-100 text-blue-700';
+                    if (bmi < 25.0) return 'bg-emerald-100 text-emerald-800';
+                    if (bmi < 30.0) return 'bg-amber-100 text-amber-800';
+                    return 'bg-red-100 text-red-800';
+                },
+                atRiskCount() {
+                    if (!this.results) return 0;
+                    return Object.values(this.results).filter(r => r.is_at_risk).length;
+                }
+            },
             methods: {
                 calcBMI() {
                     if (this.form.height_cm > 0 && this.form.weight_kg > 0) {
@@ -276,6 +553,7 @@
                     }
                 },
                 fillSampleData() {
+                    // Realistic High-Risk Patient
                     this.form = {
                         age: 62,
                         gender: 2,
@@ -295,6 +573,55 @@
                         education: 3,
                         income_poverty_ratio: 1.2
                     };
+                    this.calcBMI();
+                },
+                fillHealthyData() {
+                    // Healthy Baseline Patient
+                    this.form = {
+                        age: 32,
+                        gender: 1,
+                        ethnicity: 3,
+                        height_cm: 178,
+                        weight_kg: 72,
+                        bmi: 22.7,
+                        waist_cm: 82,
+                        hba1c: 5.1,
+                        fasting_glucose: 88,
+                        total_cholesterol: 175,
+                        hdl: 58,
+                        triglycerides: 95,
+                        ldl: 98,
+                        ever_smoked: 2,
+                        sedentary_minutes: 180,
+                        education: 5,
+                        income_poverty_ratio: 3.8
+                    };
+                    this.calcBMI();
+                },
+                getDiseaseIcon(disease) {
+                    const icons = {
+                        'Diabetes': 'fa-solid fa-droplet text-amber-500',
+                        'Hypertension': 'fa-solid fa-heart-pulse text-rose-500',
+                        'Heart Disease': 'fa-solid fa-heart-circle-bolt text-red-600',
+                        'Stroke': 'fa-solid fa-brain text-purple-600',
+                        'Arthritis': 'fa-solid fa-bone text-orange-500',
+                        'Asthma': 'fa-solid fa-lungs text-sky-500'
+                    };
+                    return icons[disease] || 'fa-solid fa-notes-medical text-primary';
+                },
+                getDiseaseAUC(disease) {
+                    const aucMap = {
+                        'Diabetes': '0.934',
+                        'Hypertension': '0.811',
+                        'Heart Disease': '0.810',
+                        'Stroke': '0.784',
+                        'Arthritis': '0.782',
+                        'Asthma': '0.607'
+                    };
+                    return aucMap[disease] || '0.800';
+                },
+                printReport() {
+                    window.print();
                 },
                 async submitPrediction() {
                     this.loading = true;
@@ -328,7 +655,7 @@
                         }
                         
                     } catch (err) {
-                        this.error = err.message || "Failed to connect to the backend API. Is it running?";
+                        this.error = err.message || "Failed to connect to the backend API. Is it running on http://localhost:8000?";
                         console.error(err);
                     } finally {
                         this.loading = false;
