@@ -54,6 +54,19 @@
             body { background: white !important; }
             .card { box-shadow: none !important; border: 1px solid #e5e7eb !important; }
         }
+    
+        /* MediVision AI floating assistant */
+        .mv-chat-launcher { position: fixed; right: 24px; bottom: 24px; z-index: 1000; width: 60px; height: 60px; border: 0; border-radius: 9999px; color: #fff; background: linear-gradient(135deg,#EA580C,#C2410C); box-shadow: 0 8px 28px rgba(194,65,12,.35); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform .2s, box-shadow .2s; }
+        .mv-chat-launcher:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(194,65,12,.42); }
+        .mv-chat-panel { position: fixed; right: 24px; bottom: 96px; z-index: 1000; width: min(390px, calc(100vw - 32px)); height: min(590px, calc(100vh - 125px)); background:#fff; border:1px solid #fed7aa; border-radius:20px; box-shadow:0 18px 60px rgba(41,24,12,.22); display:flex; flex-direction:column; overflow:hidden; }
+        .mv-chat-messages { flex:1; overflow-y:auto; padding:16px; background:linear-gradient(180deg,#fffaf5 0%,#fff 100%); }
+        .mv-chat-bubble { max-width:88%; padding:10px 12px; border-radius:14px; font-size:13px; line-height:1.55; white-space:pre-wrap; overflow-wrap:anywhere; }
+        .mv-chat-user { margin-left:auto; background:#EA580C; color:#fff; border-bottom-right-radius:4px; }
+        .mv-chat-assistant { margin-right:auto; background:#fff; color:#374151; border:1px solid #f3e8df; border-bottom-left-radius:4px; }
+        .mv-chat-panel[dir="rtl"] .mv-chat-user { margin-left:0; margin-right:auto; border-bottom-right-radius:14px; border-bottom-left-radius:4px; }
+        .mv-chat-panel[dir="rtl"] .mv-chat-assistant { margin-right:0; margin-left:auto; border-bottom-left-radius:14px; border-bottom-right-radius:4px; }
+        @media (max-width: 480px) { .mv-chat-launcher { right:16px; bottom:16px; width:56px; height:56px; } .mv-chat-panel { right:8px; bottom:82px; width:calc(100vw - 16px); height:min(620px,calc(100vh - 100px)); } }
+
     </style>
 </head>
 <body>
@@ -490,6 +503,62 @@
             </div>
         </footer>
 
+
+        <!-- Floating MediVision AI Chatbot -->
+        <button type="button" class="mv-chat-launcher" @click="chatOpen = !chatOpen" :aria-label="chatOpen ? 'Close MediVision AI assistant' : 'Open MediVision AI assistant'" :aria-expanded="chatOpen.toString()" title="MediVision AI Assistant">
+            <i :class="chatOpen ? 'fas fa-xmark text-xl' : 'fas fa-comment-medical text-2xl'"></i>
+        </button>
+
+        <section v-if="chatOpen" class="mv-chat-panel fade-in" :dir="chatLanguage === 'ar' ? 'rtl' : 'ltr'" aria-label="MediVision AI Chat Assistant">
+            <header class="px-4 py-3.5 text-white flex items-center justify-between gap-3" style="background:linear-gradient(135deg,#C2410C,#EA580C,#F97316)">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-white/15 border border-white/25 flex items-center justify-center shrink-0"><i class="fas fa-heart-pulse text-lg"></i></div>
+                    <div class="min-w-0">
+                        <h2 class="font-bold text-sm">MediVision AI Assistant</h2>
+                        <p class="text-[11px] text-orange-100">{{ chatLanguage === 'ar' ? 'مساعد توعوي للنتائج الصحية' : 'Health analytics assistant' }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <select v-model="chatLanguage" aria-label="Chat language" class="text-xs rounded-lg px-2 py-1.5 bg-white text-gray-800 border border-orange-200 focus:outline-none">
+                        <option value="auto">Auto</option>
+                        <option value="en">EN</option>
+                        <option value="ar">عربي</option>
+                    </select>
+                    <button type="button" @click="chatOpen = false" class="w-8 h-8 rounded-lg hover:bg-white/15" aria-label="Close chat"><i class="fas fa-xmark"></i></button>
+                </div>
+            </header>
+
+            <div ref="chatMessagesBox" class="mv-chat-messages space-y-3" aria-live="polite">
+                <div v-if="chatMessages.length === 0" class="text-center py-5">
+                    <div class="mx-auto mb-3 w-12 h-12 rounded-2xl bg-orange-50 text-primary flex items-center justify-center"><i class="fas fa-sparkles text-xl"></i></div>
+                    <h3 class="text-sm font-bold text-gray-800 mb-1">{{ chatLanguage === 'ar' ? 'أهلًا بك في MediVision AI' : 'Welcome to MediVision AI' }}</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed mb-4">{{ chatLanguage === 'ar' ? 'اسأل عن إمكانيات المنصة أو اطلب شرحًا لنتائج التحليل.' : 'Ask about the platform or request an explanation of your analysis.' }}</p>
+                    <button type="button" @click="chatInput = chatLanguage === 'ar' ? 'ما الذي يستطيع MediVision AI فعله؟' : 'What can MediVision AI do?'; sendChatMessage()" class="text-xs font-semibold text-primary bg-orange-50 border border-orange-100 rounded-xl px-3 py-2 hover:bg-orange-100">{{ chatLanguage === 'ar' ? 'ما الذي يستطيع النظام فعله؟' : 'What can this system do?' }}</button>
+                    <button v-if="results" type="button" @click="chatInput = chatLanguage === 'ar' ? 'اشرح نتائج التحليل الحالية بشكل مبسط.' : 'Explain my current analysis results in simple terms.'; shareHealthDataConsent = true; sendChatMessage()" class="block mx-auto mt-2 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-xl px-3 py-2 hover:bg-emerald-100">{{ chatLanguage === 'ar' ? 'شرح نتائج التحليل الحالية' : 'Explain current results' }}</button>
+                </div>
+
+                <div v-for="(item, index) in chatMessages" :key="index" class="flex flex-col gap-1">
+                    <span class="text-[10px] text-gray-400 px-1" :class="item.role === 'user' ? 'text-right' : 'text-left'">{{ item.role === 'user' ? (chatLanguage === 'ar' ? 'أنت' : 'You') : 'MediVision AI' }}</span>
+                    <div class="mv-chat-bubble" :class="item.role === 'user' ? 'mv-chat-user' : 'mv-chat-assistant'">{{ item.content }}</div>
+                </div>
+
+                <div v-if="chatLoading" class="mv-chat-bubble mv-chat-assistant flex items-center gap-2"><i class="fas fa-circle-notch fa-spin text-primary"></i><span>{{ chatLanguage === 'ar' ? 'جاري التفكير...' : 'Thinking...' }}</span></div>
+                <div v-if="chatError" class="rounded-xl border border-red-200 bg-red-50 text-red-700 p-3 text-xs" role="alert">{{ chatError }} <button type="button" @click="retryChat" class="font-bold underline ml-1">{{ chatLanguage === 'ar' ? 'إعادة المحاولة' : 'Retry' }}</button></div>
+            </div>
+
+            <div class="border-t border-orange-100 p-3 bg-white space-y-2">
+                <label v-if="results" class="flex items-start gap-2 text-[11px] text-gray-600 leading-relaxed">
+                    <input type="checkbox" v-model="shareHealthDataConsent" class="mt-0.5 accent-orange-600 shrink-0">
+                    <span>{{ chatLanguage === 'ar' ? 'أوافق على إرسال بيانات المؤشرات الصحية الحالية إلى Gemini لشرح نتائج ML. لا تحدد هذا الخيار للأسئلة العامة.' : 'I consent to sending the current health profile to Gemini to explain ML results. Leave unchecked for general questions.' }}</span>
+                </label>
+                <form @submit.prevent="sendChatMessage" class="flex items-end gap-2">
+                    <textarea v-model="chatInput" @keydown.enter.exact.prevent="sendChatMessage" :placeholder="chatLanguage === 'ar' ? 'اكتب رسالتك...' : 'Ask MediVision AI...'" rows="1" maxlength="2000" class="flex-1 resize-none rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm focus:border-orange-400 focus:outline-none" :dir="chatLanguage === 'ar' ? 'rtl' : 'auto'" :disabled="chatLoading"></textarea>
+                    <button type="submit" :disabled="chatLoading || !chatInput.trim()" class="w-10 h-10 rounded-xl text-white flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" style="background:linear-gradient(135deg,#EA580C,#C2410C)" :aria-label="chatLanguage === 'ar' ? 'إرسال' : 'Send message'"><i class="fas fa-paper-plane"></i></button>
+                </form>
+                <p class="text-[10px] text-gray-400 text-center">{{ chatLanguage === 'ar' ? 'معلومات توعوية فقط، وليست تشخيصًا طبيًا.' : 'For informational purposes only; not a medical diagnosis.' }}</p>
+            </div>
+        </section>
+
     </div>
 
     <script>
@@ -502,6 +571,14 @@
                     error: null,
                     results: null,
                     profile: null,
+                    chatOpen: false,
+                    chatInput: '',
+                    chatMessages: [],
+                    chatLoading: false,
+                    chatError: '',
+                    chatLanguage: 'auto',
+                    shareHealthDataConsent: false,
+                    lastChatRequest: null,
                     form: {
                         age: 55,
                         gender: 1,
@@ -622,6 +699,79 @@
                 },
                 printReport() {
                     window.print();
+                },
+                async sendChatMessage() {
+                    const message = this.chatInput.trim();
+                    if (!message || this.chatLoading) return;
+
+                    this.chatError = '';
+                    this.chatInput = '';
+                    const history = this.chatMessages.slice(-10).map(item => ({
+                        role: item.role,
+                        content: item.content
+                    }));
+                    this.chatMessages.push({ role: 'user', content: message });
+
+                    const includeProfile = Boolean(this.results && this.shareHealthDataConsent);
+                    const payload = {
+                        message,
+                        language: this.chatLanguage,
+                        history,
+                        profile: includeProfile ? { ...this.form } : null,
+                        consent_to_send_health_data: includeProfile
+                    };
+                    this.lastChatRequest = payload;
+                    this.chatLoading = true;
+
+                    try {
+                        const response = await fetch('http://localhost:8000/chat', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        const data = await response.json().catch(() => ({}));
+                        if (!response.ok) {
+                            throw new Error(data.detail || 'The assistant could not respond. Please try again.');
+                        }
+                        if (!data.reply || typeof data.reply !== 'string') {
+                            throw new Error('The assistant returned an empty response. Please try again.');
+                        }
+                        this.chatMessages.push({ role: 'assistant', content: data.reply });
+                    } catch (err) {
+                        this.chatError = err.message || 'Could not connect to the backend at http://localhost:8000.';
+                        console.error('MediVision chat error:', err);
+                    } finally {
+                        this.chatLoading = false;
+                        this.$nextTick(() => {
+                            const box = this.$refs.chatMessagesBox;
+                            if (box) box.scrollTop = box.scrollHeight;
+                        });
+                    }
+                },
+                retryChat() {
+                    if (!this.lastChatRequest || this.chatLoading) return;
+                    const payload = this.lastChatRequest;
+                    this.chatError = '';
+                    this.chatLoading = true;
+                    fetch('http://localhost:8000/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(async response => {
+                        const data = await response.json().catch(() => ({}));
+                        if (!response.ok) throw new Error(data.detail || 'The assistant could not respond.');
+                        if (!data.reply || typeof data.reply !== 'string') throw new Error('The assistant returned an empty response.');
+                        this.chatMessages.push({ role: 'assistant', content: data.reply });
+                    })
+                    .catch(err => { this.chatError = err.message || 'Could not connect to the backend.'; })
+                    .finally(() => {
+                        this.chatLoading = false;
+                        this.$nextTick(() => {
+                            const box = this.$refs.chatMessagesBox;
+                            if (box) box.scrollTop = box.scrollHeight;
+                        });
+                    });
                 },
                 async submitPrediction() {
                     this.loading = true;
