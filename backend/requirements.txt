@@ -6,3 +6,4 @@ pandas
 joblib
 numpy
 google-genai
+python-dotenv

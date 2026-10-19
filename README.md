@@ -186,12 +186,12 @@ curl -X POST "http://localhost:8000/predict" \
 ```
 
 #### Conversational Clinical AI (Google Gemini Integration):
-The backend integrates **Google Gemini** (default: `gemini-3.8-flash` via the `google-genai` SDK) to provide interactive, context-aware clinical explanations and patient education.
+The backend integrates **Google Gemini** (default: `gemini-2.5-flash` with automatic fallback via the `google-genai` SDK) to provide interactive, context-aware clinical explanations and patient education.
 
 - **Endpoint**: `POST /chat`
 - **Configuration**:
-  - `GEMINI_API_KEY`: API key for Google Gemini (required to enable chat).
-  - `GEMINI_MODEL`: Model identifier (defaults to `gemini-3.8-flash`).
+  - `GEMINI_API_KEY` (or `GOOGLE_API_KEY`): API key for Google Gemini (required to enable chat). Can be defined in `backend/.env` or as an environment variable.
+  - `GEMINI_MODEL`: Model identifier (defaults to `gemini-2.5-flash`, with automatic fallback to active Flash models).
 - **Safety & Grounding Guardrails**:
   - Requires explicit patient consent (`consent_to_send_health_data: true`) before analyzing biomarker profiles.
   - Generates real-time model predictions on the server and feeds verified statistical outputs directly to Gemini.
@@ -373,6 +373,14 @@ jupyter notebook notebooks/01_MediVision_Predictive_Health_Analytics.ipynb
 ### Step 3: Launch the Backend Microservice
 
 **(Optional) Configure Gemini API Key for AI Chat:**
+
+You can create a `.env` file inside `backend/` (or copy `.env.example`):
+```bash
+# In backend/.env
+GEMINI_API_KEY="your-gemini-api-key"
+```
+
+Or set it in your terminal:
 ```bash
 # On Windows (PowerShell):
 $env:GEMINI_API_KEY="your-gemini-api-key"

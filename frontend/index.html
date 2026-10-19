@@ -731,7 +731,13 @@
                         });
                         const data = await response.json().catch(() => ({}));
                         if (!response.ok) {
-                            throw new Error(data.detail || 'The assistant could not respond. Please try again.');
+                            let detailMsg = data.detail;
+                            if (Array.isArray(detailMsg)) {
+                                detailMsg = detailMsg.map(d => d.msg || JSON.stringify(d)).join(', ');
+                            } else if (typeof detailMsg === 'object' && detailMsg !== null) {
+                                detailMsg = JSON.stringify(detailMsg);
+                            }
+                            throw new Error(detailMsg || 'The assistant could not respond. Please try again.');
                         }
                         if (!data.reply || typeof data.reply !== 'string') {
                             throw new Error('The assistant returned an empty response. Please try again.');
@@ -760,7 +766,15 @@
                     })
                     .then(async response => {
                         const data = await response.json().catch(() => ({}));
-                        if (!response.ok) throw new Error(data.detail || 'The assistant could not respond.');
+                        if (!response.ok) {
+                            let detailMsg = data.detail;
+                            if (Array.isArray(detailMsg)) {
+                                detailMsg = detailMsg.map(d => d.msg || JSON.stringify(d)).join(', ');
+                            } else if (typeof detailMsg === 'object' && detailMsg !== null) {
+                                detailMsg = JSON.stringify(detailMsg);
+                            }
+                            throw new Error(detailMsg || 'The assistant could not respond.');
+                        }
                         if (!data.reply || typeof data.reply !== 'string') throw new Error('The assistant returned an empty response.');
                         this.chatMessages.push({ role: 'assistant', content: data.reply });
                     })
