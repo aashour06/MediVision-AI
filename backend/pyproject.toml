@@ -1,3 +1,4 @@
+
 [project]
 name = "backend"
 version = "0.1.0"
@@ -10,6 +11,11 @@ requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.142.2",
     "uvicorn>=0.54.0",
+    "google-genai",
+    "numpy",
+    "pandas",
+    "scikit-learn",
+    "joblib",
 ]
 
 [project.scripts]

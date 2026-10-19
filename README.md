@@ -10,12 +10,13 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.9%2B-3776AB?style=flat&logo=python&logoColor=white" alt="Python 3.9+">
+  <img src="https://img.shields.io/badge/Python-3.13%2B-3776AB?style=flat&logo=python&logoColor=white" alt="Python 3.13+">
   <img src="https://img.shields.io/badge/FastAPI-0.110%2B-009688?style=flat&logo=fastapi&logoColor=white" alt="FastAPI">
   <img src="https://img.shields.io/badge/Vue.js-3.x-4FC08D?style=flat&logo=vuedotjs&logoColor=white" alt="Vue 3">
   <img src="https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?style=flat&logo=tailwind-css&logoColor=white" alt="Tailwind CSS">
   <img src="https://img.shields.io/badge/scikit--learn-1.4%2B-F7931E?style=flat&logo=scikit-learn&logoColor=white" alt="scikit-learn">
   <img src="https://img.shields.io/badge/CDC_NHANES-2017--2020-blue?style=flat" alt="CDC NHANES">
+  <img src="https://img.shields.io/badge/Google_Gemini-AI_Chat-8E75B2?style=flat&logo=google-gemini&logoColor=white" alt="Google Gemini">
   <img src="https://img.shields.io/badge/DEPI-Graduation_Project-EA580C?style=flat" alt="DEPI Graduation Project">
 </p>
 
@@ -34,7 +35,7 @@ By combining **Predictive Health Analytics** (evaluating 17 physiological and de
 ```
                     ┌──────────────────────────────────────────────┐
                     │          CDC NHANES 2017–2020 Data           │
-                    │         (12 Modular SAS .XPT Files)          │
+                    │         (14 Modular SAS .XPT Files)          │
                     └──────────────────────┬───────────────────────┘
                                            │
                                            ▼
@@ -44,17 +45,19 @@ By combining **Predictive Health Analytics** (evaluating 17 physiological and de
                     └──────────────────────┬───────────────────────┘
                                            │ Serialized Models (.joblib)
                                            ▼
-                    ┌──────────────────────────────────────────────┐
-                    │             FastAPI Backend API              │
-                    │        (POST /predict • 17 Biomarkers)       │
-                    └──────────────┬───────────────────────────────┘
-                                   │ HTTP JSON (Real-Time)
-                                   ▼
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│                             FastAPI Backend API                                  │
+│   • POST /predict (17 Biomarkers Multi-Disease Risk Engine)                      │
+│   • POST /chat    (Google Gemini 3.8 Flash Clinical Q&A Service)                 │
+└───────────────────────┬──────────────────────────────────▲───────────────────────┘
+                        │ HTTP JSON                        │
+                        ▼ (Real-Time Risks & Chat)         │ Context & User Queries
 ┌──────────────────────────────────────────────────────────────────────────────────┐
 │                    MediVision-AI Clinical Dashboard (Frontend)                    │
-│  - Warm Medical Orange Theme        - Inline Biomarker Telemetry (17 markers)   │
+│  - Warm Medical Orange Theme        - Inline Biomarker Telemetry (17 markers)    │
 │  - Live WHO BMI Categorization      - Dual Patient Presets (High-Risk/Healthy)   │
-│  - 6-Disease Probability Meters     - Clinical Summary Export & Print           │
+│  - 6-Disease Probability Meters     - Clinical Summary Export & Print            │
+│  - Interactive AI Assistant Panel   - Bilingual (English & Arabic RTL) via Gemini│
 └──────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -63,7 +66,7 @@ By combining **Predictive Health Analytics** (evaluating 17 physiological and de
 ### 1. 📊 Predictive Health Analytics (Machine Learning Module)
 **Status:** ✅ Active & Operational &bull; **Location:** [`notebooks/`](notebooks/) &bull; [`models/`](models/)
 
-The core predictive engine simultaneously analyzes individual risk across **6 major chronic conditions** derived from CDC NHANES Cycle P (2017–2020 Pre-Pandemic) survey data:
+The core predictive engine simultaneously analyzes individual risk across **6 major chronic conditions** derived from CDC NHANES Cycle P (2017–2020 Pre-Pandemic) survey data across 14 modular survey files:
 
 | Chronic Disease | Test ROC-AUC | Test PR-AUC | Population Positive Rate | Clinical Focus |
 |:----------------|:------------:|:-----------:|:-----------------------:|:---------------|
@@ -95,6 +98,7 @@ A lightweight, asynchronous REST microservice built with **FastAPI** and served 
 |:-------|:-----|:------------|:-------|
 | `GET` | `/` | Health check & service readiness probe | Public |
 | `POST` | `/predict` | Ingests 17 biomarkers, returns comprehensive risk scores | Public |
+| `POST` | `/chat` | Conversational clinical Q&A powered by Google Gemini (bilingual AR/EN, consent-gated, context-aware) | Public (requires `GEMINI_API_KEY`) |
 | `GET` | `/docs` | Interactive Swagger UI API documentation & testing sandbox | Public |
 | `GET` | `/redoc` | OpenAPI ReDoc alternative documentation | Public |
 
@@ -181,6 +185,37 @@ curl -X POST "http://localhost:8000/predict" \
 }
 ```
 
+#### Conversational Clinical AI (Google Gemini Integration):
+The backend integrates **Google Gemini** (default: `gemini-3.8-flash` via the `google-genai` SDK) to provide interactive, context-aware clinical explanations and patient education.
+
+- **Endpoint**: `POST /chat`
+- **Configuration**:
+  - `GEMINI_API_KEY`: API key for Google Gemini (required to enable chat).
+  - `GEMINI_MODEL`: Model identifier (defaults to `gemini-3.8-flash`).
+- **Safety & Grounding Guardrails**:
+  - Requires explicit patient consent (`consent_to_send_health_data: true`) before analyzing biomarker profiles.
+  - Generates real-time model predictions on the server and feeds verified statistical outputs directly to Gemini.
+  - Enforces strict safety rules: predictions are framed as statistical estimates (not diagnoses), medication prescription is prohibited, and model limitations (such as asthma discrimination) are transparently disclosed.
+  - Retains multi-turn conversation history (up to 10 context messages).
+
+#### Sample Chat Request:
+```bash
+curl -X POST "http://localhost:8000/chat" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "Can you explain what my diabetes and hypertension risk scores mean?",
+    "language": "en",
+    "consent_to_send_health_data": true,
+    "profile": {
+      "age": 62, "gender": 2, "ethnicity": 4, "education": 3, "income_poverty_ratio": 1.2,
+      "height_cm": 162, "weight_kg": 92, "bmi": 35.1, "waist_cm": 108,
+      "hba1c": 7.2, "fasting_glucose": 145, "total_cholesterol": 240,
+      "hdl": 35, "triglycerides": 210, "ldl": 160,
+      "ever_smoked": 1, "sedentary_minutes": 480
+    }
+  }'
+```
+
 ---
 
 ### 3. 🖥️ Modern Clinical Intelligence Dashboard
@@ -191,12 +226,17 @@ A browser-native, zero-build clinical dashboard powered by **Vue 3**, **Tailwind
 #### Key UI/UX Highlights:
 - 🎨 **Medical Orange Brand Palette**: Modern gradient orange identity (`#EA580C`, `#F97316`, `#C2410C`, cream `#FAF7F2`) paired with Google Fonts (*Inter* + *Poppins*).
 - 🏷️ **Integrated Branding Assets**: Displays the official `MediVision - AI.png` medical cross & leaf icon across the header, favicon, and empty-state telemetry displays.
-- 📐 **High-Readability Telemetry Layout**: Generous `max-w-[1420px]` responsive canvas with `1.4rem` card padding, inline input fields, and clear clinical reference labels.
+- 📐 **High-Readability Telemetry Layout**: Generous responsive canvas with structured biomarker cards, inline input fields, validation, and clinical normal range indicators.
 - 🧮 **Live WHO BMI Classifier**: Automatically recalculates Body Mass Index on height/weight input and applies color-coded WHO chips (*Underweight*, *Normal*, *Overweight*, *Obese*).
 - ⚡ **Dual Sample Data Presets**:
   - **High-Risk**: Populates a realistic multi-morbid profile (elevated HbA1c, high BMI, dyslipidemia, smoker).
   - **Healthy**: Populates a normative baseline profile.
 - 📊 **6-Disease Dynamic Risk Grid**: Live probability percentages, animated progress bars, ROC-AUC benchmarks, and clinical monitoring badges.
+- 💬 **Interactive AI Chat Assistant (Google Gemini)**: Floating action widget (FAB) in the bottom-right corner offering conversational clinical Q&A:
+  - **Bilingual English & Arabic**: Dynamic Right-to-Left (RTL) interface switching when Arabic is selected.
+  - **Context-Aware Explanations**: Seamlessly explains current patient risk scores and biomarker findings.
+  - **Privacy Consent Protocol**: Explicit user opt-in checkbox before health data is shared with the AI assistant.
+  - **One-Click Quick Actions**: Preset prompts (*"What can this system do?"*, *"Explain current results"*).
 - 🖨️ **Print & Export Ready**: Native browser print styling isolates the diagnostic report for patient charts or PDF generation.
 - 🚀 **Zero-Build Architecture**: Can be opened directly via `file:///` double-click in any browser or served through any HTTP server.
 
@@ -242,21 +282,24 @@ MediVision-AI/
 │   ├── MediVision - AI.png          # Official project logo & branding emblem
 │   └── heart_disease.png            # 3D cardiovascular pathology medical illustration
 ├── backend/
+│   ├── src/
+│   │   └── backend/
+│   │       └── __init__.py          # Python package scaffold
 │   ├── main.py                      # FastAPI REST microservice & prediction logic
-│   └── requirements.txt             # API runtime dependencies (FastAPI, Uvicorn, etc.)
+│   ├── pyproject.toml               # Project metadata & uv dependency spec (Python ≥3.13)
+│   ├── requirements.txt             # API runtime dependencies (FastAPI, Uvicorn, etc.)
+│   └── uv.lock                      # Deterministic dependency lock file
 ├── data/
-│   ├── raw/                         # Raw CDC NHANES .XPT files (12 survey modules)
-│   └── processed/                   # Cleaned, merged tabular clinical datasets
+│   ├── raw/                         # Raw CDC NHANES .XPT files (14 survey modules)
+│   └── processed/                   # (Reserved) Cleaned, merged tabular clinical datasets
 ├── frontend/
 │   └── index.html                   # Vue 3 + Tailwind CSS clinical dashboard (zero-build)
 ├── models/
 │   ├── trained_models.joblib        # Serialized HistGradientBoosting models (6 diseases)
 │   └── selected_features.joblib     # Pre-selected training feature indices & names
 ├── notebooks/
-│   ├── 01_MediVision_Predictive_Health_Analytics.ipynb  # Complete ML pipeline notebook
-│   └── NOTEBOOK_GUIDE.md            # Detailed cell-by-cell notebook explanation
-├── reports/
-│   └── nhanes_dataset_report.pdf    # Comprehensive exploratory dataset analysis report
+│   └── 01_MediVision_Predictive_Health_Analytics.ipynb  # Complete ML pipeline notebook
+├── reports/                         # (Reserved) Exploratory analysis reports
 ├── start_backend.bat                # Windows quick launcher for the backend server
 ├── requirements.txt                 # Core data science & ML pipeline dependencies
 ├── .gitignore
@@ -269,9 +312,11 @@ MediVision-AI/
 
 | Domain | Technologies & Libraries |
 |:-------|:-------------------------|
-| **Data Engineering & ML** | Python 3.9+ &bull; scikit-learn &bull; pandas &bull; NumPy &bull; SciPy &bull; matplotlib &bull; seaborn &bull; XGBoost |
+| **Data Engineering & ML** | Python 3.13+ &bull; scikit-learn &bull; pandas &bull; NumPy &bull; SciPy &bull; matplotlib &bull; seaborn &bull; XGBoost |
 | **Backend & Microservice** | FastAPI &bull; Uvicorn (ASGI) &bull; Pydantic &bull; joblib |
+| **Conversational AI** | Google Gemini (`gemini-3.8-flash` via `google-genai` SDK) |
 | **Frontend UI/UX** | Vue.js 3 &bull; Tailwind CSS &bull; Font Awesome 6 &bull; Google Fonts (*Inter*, *Poppins*) |
+| **Environment & Packaging** | Astral uv &bull; pyproject.toml |
 | **Data Standard** | CDC NHANES SAS Transport Format (`.xpt`) Cycle P (2017–2020) |
 | **Model Serialization** | joblib (`.joblib`) binary compression |
 
@@ -282,7 +327,7 @@ MediVision-AI/
 Run the full MediVision-AI stack locally in minutes:
 
 ### Prerequisites
-- Python 3.9 or higher
+- Python 3.13 or higher
 - [uv](https://docs.astral.sh/uv/) (recommended for fast package installation) or standard `pip`
 - Modern web browser (Chrome, Edge, Firefox, Safari)
 
@@ -291,8 +336,9 @@ Run the full MediVision-AI stack locally in minutes:
 ### Step 1: Clone the Repository & Setup Environment
 
 ```bash
-git clone https://github.com/<your-username>/MediVision-AI.git
+git clone https://github.com/aashour06/MediVision-AI.git
 cd MediVision-AI
+git switch feature/medivision-ai-chatbot
 
 # Create virtual environment with uv (or: python -m venv .venv)
 uv venv
@@ -320,11 +366,23 @@ Ensure `models/trained_models.joblib` and `models/selected_features.joblib` are 
 jupyter notebook notebooks/01_MediVision_Predictive_Health_Analytics.ipynb
 ```
 
-> **Automated Ingestion:** The notebook will automatically download the 12 CDC NHANES survey `.xpt` files on the first execution. Subsequent executions utilize the cached files in `data/raw/`.
+> **Automated Ingestion:** The notebook will automatically download the 14 CDC NHANES survey `.xpt` files on the first execution. Subsequent executions utilize the cached files in `data/raw/`.
 
 ---
 
 ### Step 3: Launch the Backend Microservice
+
+**(Optional) Configure Gemini API Key for AI Chat:**
+```bash
+# On Windows (PowerShell):
+$env:GEMINI_API_KEY="your-gemini-api-key"
+
+# On Windows (CMD):
+set GEMINI_API_KEY=your-gemini-api-key
+
+# On macOS / Linux:
+export GEMINI_API_KEY="your-gemini-api-key"
+```
 
 **Option A — Windows Quick Launcher:**
 ```cmd
@@ -338,7 +396,7 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 Verify service operation:
-- **API Status:** `http://localhost:8000/` &rarr; `{"status": "healthy", ...}`
+- **API Status:** `http://localhost:8000/` &rarr; `{"message": "MediVision-AI API is running. Use /docs to view the API documentation."}`
 - **Interactive Documentation:** `http://localhost:8000/docs`
 
 ---
@@ -355,13 +413,31 @@ The frontend is completely zero-build and ready out of the box:
    ```
    and navigate to `http://localhost:3000`.
 3. Click the **"High-Risk"** or **"Healthy"** preset buttons, then click **"Generate Risk Report"** to view real-time risk stratification.
+4. Click the floating chat bubble in the bottom-right corner to interact with the **Bilingual AI Clinical Assistant** (English & Arabic) to ask clinical questions or receive AI explanations of the risk report.
 
 ---
 
-## 📚 Supplementary Documentation
+## 🔒 Privacy, Security & Data Governance
 
-- 📖 **[Notebook Guide](notebooks/NOTEBOOK_GUIDE.md)**: In-depth breakdown of every ML step, from NHANES survey weighting to model calibration and threshold selection.
-- 📄 **[Dataset Report](reports/nhanes_dataset_report.pdf)**: Detailed distribution tables and demographic summaries for the Cycle P survey cohort.
+- 🔑 **Zero Key Exposure**: Never commit API keys or embed them into client-side code (`frontend/index.html`). Set `GEMINI_API_KEY` via server environment variables.
+- 🛡️ **Explicit Health Consent**: Biomarker telemetry is never transmitted to Google Gemini unless the user explicitly checks the consent control in the chat panel.
+- 🛑 **No Diagnostic Memory**: The backend is stateless; patient telemetry is processed ephemerally in-memory and is never logged to disk or persisted to databases.
+- ⚙️ **Secret Exclusions**: The root `.gitignore` strictly excludes `.env`, `*.log`, and environment credential artifacts.
+
+---
+
+## ⚠️ Clinical Limitations & Ethical Safeguards
+
+- 📈 **Statistical Risk vs. Clinical Diagnosis**: Predictions reflect statistical likelihoods derived from population-level CDC NHANES survey cohorts. They do **not** constitute definitive clinical diagnoses.
+- 🫁 **Asthma Model Caveat**: As noted in our evaluation benchmark table, the Asthma predictive model achieves an AUC of 0.607, indicating limited standalone discriminative power compared to metabolic and cardiovascular targets.
+- 💊 **No Medical Prescription**: Neither the machine learning engine nor the Gemini conversational assistant is authorized or trained to prescribe medications, suggest dosages, or replace professional clinician consultation.
+- 🤖 **AI Hallucination Mitigation**: The Gemini system prompt explicitly bounds the assistant to verified server-side ML outputs and enforces bilingual medical guardrails.
+
+---
+
+## 📚 Research & Pipeline Documentation
+
+- 📓 **[Interactive ML Pipeline Notebook](notebooks/01_MediVision_Predictive_Health_Analytics.ipynb)**: End-to-end Jupyter notebook covering data acquisition, merging of 14 NHANES survey modules, exploratory data analysis, HistGradientBoosting training with class balancing, ROC-AUC/PR-AUC evaluation, and model serialization.
 
 ---
 
@@ -371,6 +447,12 @@ All training data originates from the **National Health and Nutrition Examinatio
 - **Survey Cycle:** Pre-Pandemic 2017–March 2020 (Cycle P).
 - **Public Domain:** Data is publicly accessible at [wwwn.cdc.gov/nchs/nhanes](https://wwwn.cdc.gov/nchs/nhanes/).
 - **Ethical Use:** Used in compliance with NCHS data usage agreements for research and educational purposes.
+
+---
+
+## ⚖️ Medical Disclaimer
+
+> **IMPORTANT:** MediVision-AI is an educational and clinical research demonstration developed for academic assessment. It is not an FDA-approved medical device, does not establish a doctor-patient relationship, and must never be used as a substitute for professional medical advice, diagnosis, or treatment.
 
 ---
 
