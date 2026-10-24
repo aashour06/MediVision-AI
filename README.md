@@ -5,18 +5,21 @@
 <h1 align="center">🧬 MediVision-AI</h1>
 
 <p align="center">
-  <strong>Multi-Modal AI Healthcare Intelligence Platform</strong><br>
-  Predictive Health Analytics &bull; Chronic Disease Risk Assessment &bull; Clinical Computer Vision
+  <strong>Multimodal AI Healthcare Intelligence Platform</strong><br>
+  Predictive Health Analytics &bull; Computer Vision Chest X-ray Diagnostics &bull; Grad-CAM Explainability &bull; Clinical Decision Support
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.13%2B-3776AB?style=flat&logo=python&logoColor=white" alt="Python 3.13+">
+  <img src="https://img.shields.io/badge/PyTorch-2.2%2B-EE4C2C?style=flat&logo=pytorch&logoColor=white" alt="PyTorch">
+  <img src="https://img.shields.io/badge/Torchvision-0.17%2B-EE4C2C?style=flat" alt="Torchvision">
   <img src="https://img.shields.io/badge/FastAPI-0.110%2B-009688?style=flat&logo=fastapi&logoColor=white" alt="FastAPI">
+  <img src="https://img.shields.io/badge/DenseNet-121-00599C?style=flat" alt="DenseNet-121">
   <img src="https://img.shields.io/badge/Vue.js-3.x-4FC08D?style=flat&logo=vuedotjs&logoColor=white" alt="Vue 3">
   <img src="https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?style=flat&logo=tailwind-css&logoColor=white" alt="Tailwind CSS">
-  <img src="https://img.shields.io/badge/scikit--learn-1.4%2B-F7931E?style=flat&logo=scikit-learn&logoColor=white" alt="scikit-learn">
+  <img src="https://img.shields.io/badge/NIH_ChestX--ray14-Dataset-red?style=flat" alt="NIH ChestX-ray14">
   <img src="https://img.shields.io/badge/CDC_NHANES-2017--2020-blue?style=flat" alt="CDC NHANES">
-  <img src="https://img.shields.io/badge/Google_Gemini-AI_Chat-8E75B2?style=flat&logo=google-gemini&logoColor=white" alt="Google Gemini">
+  <img src="https://img.shields.io/badge/Google_Gemini-Clinical_Assistant-8E75B2?style=flat&logo=google-gemini&logoColor=white" alt="Google Gemini">
   <img src="https://img.shields.io/badge/DEPI-Graduation_Project-EA580C?style=flat" alt="DEPI Graduation Project">
 </p>
 
@@ -24,253 +27,249 @@
 
 ## 📌 Executive Summary
 
-**MediVision-AI** is a modular, clinical-grade healthcare intelligence platform engineered to assist physicians, clinical researchers, and healthcare providers in proactive, data-driven patient risk assessment.
+**MediVision-AI** is a clinical-grade multimodal artificial intelligence platform engineered to assist physicians, clinical researchers, and healthcare providers in proactive, data-driven patient risk assessment and radiological screening.
 
-By combining **Predictive Health Analytics** (evaluating 17 physiological and demographic biomarkers from real-world population surveys) with a **RESTful microservice architecture** and a modern, high-readability **Clinical Dashboard**, MediVision-AI provides instant, multi-disease risk profiles before acute clinical escalation.
+By uniting **Predictive Health Analytics** (evaluating 17 physiological and laboratory biomarkers from CDC NHANES surveys) with **Deep Learning Computer Vision** (classifying 5 critical thoracic pathologies on frontal chest radiographs using DenseNet-121 with **Grad-CAM visual explainability**) and a modern **Vue 3 Clinical Intelligence Dashboard**, MediVision-AI provides instant, multi-system clinical risk intelligence before acute disease progression.
 
 ---
 
-## 🏗️ System Architecture & Modules
+## 🏗️ Multimodal System Architecture
 
 ```
-                    ┌──────────────────────────────────────────────┐
-                    │          CDC NHANES 2017–2020 Data           │
-                    │         (14 Modular SAS .XPT Files)          │
-                    └──────────────────────┬───────────────────────┘
-                                           │
-                                           ▼
-                    ┌──────────────────────────────────────────────┐
-                    │      01_MediVision ML Training Pipeline      │
-                    │   HistGradientBoosting Multi-Disease Engine   │
-                    └──────────────────────┬───────────────────────┘
-                                           │ Serialized Models (.joblib)
-                                           ▼
-┌──────────────────────────────────────────────────────────────────────────────────┐
-│                             FastAPI Backend API                                  │
-│   • POST /predict (17 Biomarkers Multi-Disease Risk Engine)                      │
-│   • POST /chat    (Google Gemini 3.8 Flash Clinical Q&A Service)                 │
-└───────────────────────┬──────────────────────────────────▲───────────────────────┘
-                        │ HTTP JSON                        │
-                        ▼ (Real-Time Risks & Chat)         │ Context & User Queries
-┌──────────────────────────────────────────────────────────────────────────────────┐
-│                    MediVision-AI Clinical Dashboard (Frontend)                    │
-│  - Warm Medical Orange Theme        - Inline Biomarker Telemetry (17 markers)    │
-│  - Live WHO BMI Categorization      - Dual Patient Presets (High-Risk/Healthy)   │
-│  - 6-Disease Probability Meters     - Clinical Summary Export & Print            │
-│  - Interactive AI Assistant Panel   - Bilingual (English & Arabic RTL) via Gemini│
-└──────────────────────────────────────────────────────────────────────────────────┘
+                                  ┌────────────────────────────────────────────────────────┐
+                                  │                  MediVision-AI Platform                │
+                                  └───────────────────────────┬────────────────────────────┘
+                                                              │
+                    ┌─────────────────────────────────────────┴─────────────────────────────────────────┐
+                    │                                                                                   │
+                    ▼                                                                                   ▼
+┌───────────────────────────────────────┐                                           ┌───────────────────────────────────────┐
+│     Modality 1: Tabular ML Engine     │                                           │     Modality 2: Computer Vision       │
+│  • CDC NHANES 2017–2020 Data          │                                           │  • NIH ChestX-ray14 Radiographs       │
+│  • 17 Physiological/Lab Biomarkers    │                                           │  • PyTorch DenseNet-121 Backbone      │
+│  • HistGradientBoosting Classifiers   │                                           │  • Optimal Validation F1 Thresholds   │
+│  • 6 Chronic Disease Targets          │                                           │  • Grad-CAM Visual Heatmap Overlays   │
+└───────────────────┬───────────────────┘                                           └───────────────────┬───────────────────┘
+                    │                                                                                   │
+                    │ Model Artifacts (.joblib)                                                         │ Weights (.pth) & Config (.json)
+                    ▼                                                                                   ▼
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                   FastAPI Backend Service                                                 │
+│   • POST /predict                          (17 Biomarkers Multi-Disease Risk Engine)                                     │
+│   • POST /api/vision/predict-chest-xray     (Chest Radiograph Inference + Grad-CAM Heatmaps)                              │
+│   • GET  /api/vision/status                (Vision Model Telemetry & Validation Thresholds)                              │
+│   • GET  /api/vision/samples               (Built-in Radiograph Sample Assets)                                           │
+│   • POST /chat                             (Bilingual Google Gemini Multimodal Clinical Assistant)                       │
+│   • Mounts /assets & /app                  (Direct Browser Static Delivery)                                              │
+└─────────────────────────────────────────────────────────────┬─────────────────────────────────────────────────────────────┘
+                                                              │ REST API JSON & Base64
+                                                              ▼
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                           MediVision-AI Web Application (Frontend)                                        │
+│  1. Modern Medical Hero Landing Page       • Dual-Engine Presentation, Interactive Navigation, Metrics Overview          │
+│  2. Tabular Predictive Health Analytics    • 17 Clinical Inputs, WHO BMI Calculator, High-Risk / Healthy Presets         │
+│  3. Chest X-ray Vision Diagnostics         • Drag & Drop Radiograph Upload, Sample Presets, 5 Thoracic Disease Cards     │
+│  4. Grad-CAM Interpretability Studio       • Overlay / Heatmap / Original / Side-by-Side Views across all 5 Conditions   │
+│  5. Floating Clinical AI Assistant         • Bilingual (EN/AR), Context-Aware Grounding, Privacy-Gated Opt-In            │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-### 1. 📊 Predictive Health Analytics (Machine Learning Module)
-**Status:** ✅ Active & Operational &bull; **Location:** [`notebooks/`](notebooks/) &bull; [`models/`](models/)
+## 🫁 Modality 1: Computer Vision Chest X-ray Diagnostic Engine
 
-The core predictive engine simultaneously analyzes individual risk across **6 major chronic conditions** derived from CDC NHANES Cycle P (2017–2020 Pre-Pandemic) survey data across 14 modular survey files:
+**Status:** ✅ Active, Fully Integrated & Operational &bull; **Location:** [`models/chest_xray/`](models/chest_xray/) &bull; [`backend/src/backend/vision.py`](backend/src/backend/vision.py)
 
-| Chronic Disease | Test ROC-AUC | Test PR-AUC | Population Positive Rate | Clinical Focus |
-|:----------------|:------------:|:-----------:|:-----------------------:|:---------------|
-| **Diabetes** | **0.934** | High | ~15% | Glycemic control & metabolic dysfunction |
-| **Hypertension** | **0.811** | Moderate | ~37% | Cardiovascular tension & arterial health |
-| **Heart Disease** | **0.810** | Moderate | ~8% | Coronary pathology, angina & myocardial infarction |
-| **Stroke** | **0.784** | Low-Mod | ~5% | Cerebrovascular risk & perfusion deficit |
-| **Arthritis** | **0.782** | Moderate | ~31% | Chronic joint inflammation & degeneration |
-| **Asthma** | **0.607** | Low | ~16% | Chronic respiratory airway sensitivity |
+### Model Architecture & Training
+- **Backbone Network:** PyTorch `torchvision.models.densenet121` initialized with ImageNet weights.
+- **Classification Head:** Linear(1024 &rarr; 512) &rarr; ReLU &rarr; Dropout(0.2) &rarr; Linear(512 &rarr; 5).
+- **Target Conditions (5 Thoracic Pathologies):**
+  1. **Cardiomegaly** (Cardiac enlargement / cardiothoracic ratio &gt; 0.5)
+  2. **Pneumonia** (Acute pulmonary parenchymal infection and consolidation)
+  3. **Effusion** (Excess fluid in the pleural space / blunting of costophrenic angles)
+  4. **Infiltration** (Ill-defined substance denser than air in the lung parenchyma)
+  5. **Atelectasis** (Partial or complete collapse of pulmonary lung volume)
+- **Input Dimensions & Preprocessing:**
+  - Resize short side to `256`
+  - Center crop to `224x224`
+  - 3-Channel RGB normalized with ImageNet statistics: $\mu = [0.485, 0.456, 0.406]$, $\sigma = [0.229, 0.224, 0.225]$
 
-> **Why ROC-AUC?** ROC-AUC is our primary evaluation metric because it is robust against severe class imbalance (e.g., Stroke at ~5% and Heart Disease at ~8%) and reliably assesses how effectively the models rank high-risk individuals above healthy baselines.
+### Test Performance & Calibrated F1 Decision Thresholds
+Because clinical hospital datasets exhibit natural class imbalance (e.g. Pneumonia prevalence at 1.26% vs Infiltration at 17.78%), standard 0.5 decision thresholds yield suboptimal clinical sensitivity. MediVision AI enforces **validation F1-optimal operating thresholds** derived from the validation set:
 
-#### Core Machine Learning Design Decisions:
-- **`HistGradientBoostingClassifier`**: Natively handles missing clinical laboratory values without requiring synthetic imputation.
-- **Dedicated Independent Classifiers**: One tuned gradient boosted tree per disease target to match each condition's distinct class balance.
-- **Class Balancing (`class_weight='balanced'`)**: Corrects for skewed sick-to-healthy prevalence.
-- **Strict Anti-Overfitting Safeguards**: Early stopping with validation score monitoring, constrained max tree depth, and L2 regularization.
+| Pathology | Prevalence (%) | Test ROC-AUC | Average Precision | Optimal F1 Threshold | Sensitivity | Specificity | F1 Score |
+|:----------|:--------------:|:------------:|:-----------------:|:--------------------:|:-----------:|:-----------:|:--------:|
+| **Cardiomegaly** | 2.74% | **0.918** | 0.351 | **0.939** | 39.3% | 98.4% | 0.400 |
+| **Effusion** | 11.39% | **0.872** | 0.474 | **0.790** | 56.1% | 91.7% | 0.509 |
+| **Atelectasis** | 10.21% | **0.799** | 0.310 | **0.650** | 47.9% | 88.5% | 0.435 |
+| **Pneumonia** | 1.26% | **0.736** | 0.042 | **0.767** | 21.0% | 96.2% | 0.100 |
+| **Infiltration** | 17.78% | **0.710** | 0.352 | **0.549** | 52.8% | 76.5% | 0.437 |
+| **Macro Average**| — | **0.807** | — | — | — | — | — |
+
+### Explainable AI: Grad-CAM Interpretability
+- **Target Feature Map:** Hook-registered on `features.denseblock4` (the final convolutional block of DenseNet-121).
+- **Activation Map Computation:** Computes global average pooled gradients $w_k^c = \frac{1}{Z}\sum_i \sum_j \frac{\partial Y^c}{\partial A_{i,j}^k}$ to produce spatial attention $L_{\text{Grad-CAM}}^c = \text{ReLU}\left(\sum_k w_k^c A^k\right)$.
+- **Visual Studio Features:**
+  - **Overlay View:** Jet-colormap attention map blended with patient radiograph ($\alpha = 0.42$).
+  - **Heatmap View:** Pure gradient intensity representation highlighting hot spots.
+  - **Original Radiograph:** Unaltered 224x224 cropped radiograph.
+  - **Side-by-Side View:** Synchronous split-screen display of original vs. Grad-CAM overlay.
+  - **Interactive Condition Switching:** Clinicians can click *any* of the 5 conditions to inspect that specific pathology's convolutional activation focus without re-running inference!
 
 ---
 
-### 2. ⚙️ High-Performance Backend API Service
-**Status:** ✅ Active & Operational &bull; **Location:** [`backend/`](backend/)
+## 📊 Modality 2: Predictive Health Analytics (Biomarker Engine)
 
-A lightweight, asynchronous REST microservice built with **FastAPI** and served via **Uvicorn**.
+**Status:** ✅ Active & Operational &bull; **Location:** [`models/`](models/) &bull; [`notebooks/01_MediVision_Predictive_Health_Analytics.ipynb`](notebooks/01_MediVision_Predictive_Health_Analytics.ipynb)
 
-#### API Endpoints:
+Analyzes individual risk across **6 chronic conditions** using 17 clinical and anthropometric biomarkers from CDC NHANES survey cohorts:
 
-| Method | Path | Description | Access |
-|:-------|:-----|:------------|:-------|
-| `GET` | `/` | Health check & service readiness probe | Public |
-| `POST` | `/predict` | Ingests 17 biomarkers, returns comprehensive risk scores | Public |
-| `POST` | `/chat` | Conversational clinical Q&A powered by Google Gemini (bilingual AR/EN, consent-gated, context-aware) | Public (requires `GEMINI_API_KEY`) |
-| `GET` | `/docs` | Interactive Swagger UI API documentation & testing sandbox | Public |
-| `GET` | `/redoc` | OpenAPI ReDoc alternative documentation | Public |
+| Chronic Condition | Test ROC-AUC | National Prevalence | Clinical Significance |
+|:------------------|:------------:|:-------------------:|:----------------------|
+| **Diabetes** | **0.934** | ~15% | Glycemic dysregulation & insulin resistance |
+| **Hypertension** | **0.811** | ~37% | Arterial pressure & cardiovascular strain |
+| **Heart Disease** | **0.810** | ~8% | Coronary artery pathology & myocardial ischemia |
+| **Stroke** | **0.784** | ~5% | Cerebrovascular perfusion deficits |
+| **Arthritis** | **0.782** | ~31% | Degenerative joint disease & inflammation |
+| **Asthma** | **0.607** | ~16% | Chronic hyper-reactive airway disease |
 
-#### Ingested Biomarker Schema (17 Clinical Parameters):
+---
 
-| # | Parameter Name | Data Type | Units / Range | Physiological Category | Normal Clinical Benchmark |
-|:-:|:---------------|:---------:|:-------------:|:-----------------------|:--------------------------|
-| 1 | `age` | `float` | 1 – 120 yrs | Demographics | Adult demographic |
-| 2 | `gender` | `int` | 1 = Male, 2 = Female | Demographics | Biological sex |
-| 3 | `ethnicity` | `int` | 1 – 7 (NHANES code) | Demographics | Demographic category |
-| 4 | `education` | `int` | 1 – 5 scale | Demographics | Socioeconomic factor |
-| 5 | `income_poverty_ratio`| `float` | 0.0 – 5.0+ | Demographics | `< 1.0` denotes poverty threshold |
-| 6 | `height_cm` | `float` | 100 – 230 cm | Anthropometrics | Stature baseline |
-| 7 | `weight_kg` | `float` | 30 – 250 kg | Anthropometrics | Weight baseline |
-| 8 | `bmi` | `float` | 10 – 60 kg/m² | Anthropometrics | WHO standard: `18.5 – 24.9` |
-| 9 | `waist_cm` | `float` | 50 – 180 cm | Anthropometrics | `< 88` (F) / `< 102` (M) cm |
-| 10 | `hba1c` | `float` | % | Laboratory Panel | `< 5.7%` (Normal) |
-| 11 | `fasting_glucose` | `float` | mg/dL | Laboratory Panel | `70 – 99` mg/dL (Fasting) |
-| 12 | `total_cholesterol` | `float` | mg/dL | Laboratory Panel | `< 200` mg/dL |
-| 13 | `hdl` | `float` | mg/dL | Laboratory Panel | `> 40` (M) / `> 50` (F) mg/dL (Good) |
-| 14 | `triglycerides` | `float` | mg/dL | Laboratory Panel | `< 150` mg/dL |
-| 15 | `ldl` | `float` | mg/dL | Laboratory Panel | `< 100` mg/dL (Optimal) |
-| 16 | `ever_smoked` | `int` | 1 = Yes, 2 = No | Lifestyle | Non-smoker baseline |
-| 17 | `sedentary_minutes` | `float` | minutes/day | Lifestyle | Typical: `180 – 360` min/day |
+## ⚙️ Backend REST API Specification
 
-#### Sample Prediction Request:
+The FastAPI microservice runs on port `8000` with comprehensive Swagger UI documentation at `http://localhost:8000/docs`.
+
+### Vision Diagnostic Endpoints
+
+#### 1. Analyze Chest X-ray Radiograph
+- **Endpoint:** `POST /api/vision/predict-chest-xray` (alias: `POST /predict-chest-xray`)
+- **Content-Type:** `multipart/form-data`
+- **Parameters:**
+  - `file` (*required*): Radiograph image file (PNG, JPEG, WebP, TIFF; up to 25 MB).
+  - `target_condition` (*optional*): Explicit condition name to highlight in Grad-CAM.
+- **Example cURL Request:**
 ```bash
-curl -X POST "http://localhost:8000/predict" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "age": 62, "gender": 2, "ethnicity": 4, "education": 3, "income_poverty_ratio": 1.2,
-    "height_cm": 162, "weight_kg": 92, "bmi": 35.1, "waist_cm": 108,
-    "hba1c": 7.2, "fasting_glucose": 145, "total_cholesterol": 240,
-    "hdl": 35, "triglycerides": 210, "ldl": 160,
-    "ever_smoked": 1, "sedentary_minutes": 480
-  }'
+curl -X POST "http://localhost:8000/api/vision/predict-chest-xray" \
+  -F "file=@assets/samples/normal_chest_xray.png"
 ```
-
-#### Sample Prediction Response:
+- **Example Response:**
 ```json
 {
-  "patient_profile": {
-    "age": 62.0,
-    "bmi": 35.1
-  },
-  "predictions": {
-    "Diabetes": {
-      "risk_score": 0.842,
-      "risk_percentage": "84.2%",
-      "prediction": "High Risk",
-      "is_at_risk": true
+  "findings": [
+    {
+      "condition": "Cardiomegaly",
+      "probability": 0.0012,
+      "probability_pct": "0.1%",
+      "confidence_pct": 0.1,
+      "threshold": 0.9395,
+      "threshold_pct": "93.9%",
+      "detected": false,
+      "status": "NOT DETECTED",
+      "severity": "normal",
+      "roc_auc": 0.918,
+      "sensitivity": 0.393,
+      "specificity": 0.984
     },
-    "Hypertension": {
-      "risk_score": 0.761,
-      "risk_percentage": "76.1%",
-      "prediction": "High Risk",
-      "is_at_risk": true
-    },
-    "Heart Disease": {
-      "risk_score": 0.589,
-      "risk_percentage": "58.9%",
-      "prediction": "High Risk",
-      "is_at_risk": true
-    },
-    "Stroke": {
-      "risk_score": 0.384,
-      "risk_percentage": "38.4%",
-      "prediction": "Low Risk",
-      "is_at_risk": false
-    },
-    "Arthritis": {
-      "risk_score": 0.628,
-      "risk_percentage": "62.8%",
-      "prediction": "High Risk",
-      "is_at_risk": true
-    },
-    "Asthma": {
-      "risk_score": 0.295,
-      "risk_percentage": "29.5%",
-      "prediction": "Low Risk",
-      "is_at_risk": false
+    {
+      "condition": "Pneumonia",
+      "probability": 0.6142,
+      "probability_pct": "61.4%",
+      "confidence_pct": 61.4,
+      "threshold": 0.7666,
+      "threshold_pct": "76.7%",
+      "detected": false,
+      "status": "NOT DETECTED",
+      "severity": "elevated",
+      "roc_auc": 0.736,
+      "sensitivity": 0.21,
+      "specificity": 0.962
     }
+  ],
+  "detected_conditions": [],
+  "has_detected_pathology": false,
+  "primary_condition": "Pneumonia",
+  "summary": "No target thoracic conditions detected above validation F1 decision boundaries. All 5 evaluated conditions are within normal limits.",
+  "visualizations": {
+    "original": "data:image/png;base64,...",
+    "overlay": "data:image/png;base64,...",
+    "heatmap": "data:image/png;base64,...",
+    "overlays_by_condition": {
+      "Cardiomegaly": "data:image/png;base64,...",
+      "Pneumonia": "data:image/png;base64,..."
+    },
+    "heatmaps_by_condition": { ... }
+  },
+  "metadata": {
+    "model_name": "MediVision AI Chest X-ray DenseNet-121",
+    "architecture": "DenseNet-121 (Convolutional Feature Extractor)",
+    "target_layer": "features.denseblock4 (Grad-CAM Localization)",
+    "test_macro_roc_auc": 0.807,
+    "clinical_status": "Research and development decision support only."
   }
 }
 ```
 
-#### Conversational Clinical AI (Google Gemini Integration):
-The backend integrates **Google Gemini** (default: `gemini-2.5-flash` with automatic fallback via the `google-genai` SDK) to provide interactive, context-aware clinical explanations and patient education.
+#### 2. Get Vision Engine Status
+- **Endpoint:** `GET /api/vision/status`
+- **Description:** Returns model readiness, target layer configuration, and per-class metrics.
 
-- **Endpoint**: `POST /chat`
-- **Configuration**:
-  - `GEMINI_API_KEY` (or `GOOGLE_API_KEY`): API key for Google Gemini (required to enable chat). Can be defined in `backend/.env` or as an environment variable.
-  - `GEMINI_MODEL`: Model identifier (defaults to `gemini-2.5-flash`, with automatic fallback to active Flash models).
-- **Safety & Grounding Guardrails**:
-  - Requires explicit patient consent (`consent_to_send_health_data: true`) before analyzing biomarker profiles.
-  - Generates real-time model predictions on the server and feeds verified statistical outputs directly to Gemini.
-  - Enforces strict safety rules: predictions are framed as statistical estimates (not diagnoses), medication prescription is prohibited, and model limitations (such as asthma discrimination) are transparently disclosed.
-  - Retains multi-turn conversation history (up to 10 context messages).
+#### 3. List & Retrieve Clinical Sample Radiographs
+- **Endpoint:** `GET /api/vision/samples` &rarr; Returns list of available sample images.
+- **Endpoint:** `GET /api/vision/samples/{filename}` &rarr; Returns raw image file for frontend preview.
 
-#### Sample Chat Request:
+---
+
+### Predictive Tabular Endpoints
+
+#### Predict Chronic Disease Risks
+- **Endpoint:** `POST /predict`
+- **Content-Type:** `application/json`
+- **Example cURL Request:**
 ```bash
-curl -X POST "http://localhost:8000/chat" \
+curl -X POST "http://localhost:8000/predict" \
   -H "Content-Type: application/json" \
   -d '{
-    "message": "Can you explain what my diabetes and hypertension risk scores mean?",
-    "language": "en",
-    "consent_to_send_health_data": true,
-    "profile": {
-      "age": 62, "gender": 2, "ethnicity": 4, "education": 3, "income_poverty_ratio": 1.2,
-      "height_cm": 162, "weight_kg": 92, "bmi": 35.1, "waist_cm": 108,
-      "hba1c": 7.2, "fasting_glucose": 145, "total_cholesterol": 240,
-      "hdl": 35, "triglycerides": 210, "ldl": 160,
-      "ever_smoked": 1, "sedentary_minutes": 480
-    }
+    "age": 55, "gender": 1, "ethnicity": 3, "education": 3, "income_poverty_ratio": 1.8,
+    "height_cm": 175, "weight_kg": 88, "bmi": 28.7, "waist_cm": 98,
+    "hba1c": 6.2, "fasting_glucose": 115, "total_cholesterol": 220,
+    "hdl": 42, "triglycerides": 180, "ldl": 142,
+    "ever_smoked": 1, "sedentary_minutes": 420
   }'
 ```
 
 ---
 
-### 3. 🖥️ Modern Clinical Intelligence Dashboard
-**Status:** ✅ Active & Operational &bull; **Location:** [`frontend/index.html`](frontend/index.html)
+### Conversational Clinical Assistant (Google Gemini)
 
-A browser-native, zero-build clinical dashboard powered by **Vue 3**, **Tailwind CSS**, and **Font Awesome 6**.
-
-#### Key UI/UX Highlights:
-- 🎨 **Medical Orange Brand Palette**: Modern gradient orange identity (`#EA580C`, `#F97316`, `#C2410C`, cream `#FAF7F2`) paired with Google Fonts (*Inter* + *Poppins*).
-- 🏷️ **Integrated Branding Assets**: Displays the official `MediVision - AI.png` medical cross & leaf icon across the header, favicon, and empty-state telemetry displays.
-- 📐 **High-Readability Telemetry Layout**: Generous responsive canvas with structured biomarker cards, inline input fields, validation, and clinical normal range indicators.
-- 🧮 **Live WHO BMI Classifier**: Automatically recalculates Body Mass Index on height/weight input and applies color-coded WHO chips (*Underweight*, *Normal*, *Overweight*, *Obese*).
-- ⚡ **Dual Sample Data Presets**:
-  - **High-Risk**: Populates a realistic multi-morbid profile (elevated HbA1c, high BMI, dyslipidemia, smoker).
-  - **Healthy**: Populates a normative baseline profile.
-- 📊 **6-Disease Dynamic Risk Grid**: Live probability percentages, animated progress bars, ROC-AUC benchmarks, and clinical monitoring badges.
-- 💬 **Interactive AI Chat Assistant (Google Gemini)**: Floating action widget (FAB) in the bottom-right corner offering conversational clinical Q&A:
-  - **Bilingual English & Arabic**: Dynamic Right-to-Left (RTL) interface switching when Arabic is selected.
-  - **Context-Aware Explanations**: Seamlessly explains current patient risk scores and biomarker findings.
-  - **Privacy Consent Protocol**: Explicit user opt-in checkbox before health data is shared with the AI assistant.
-  - **One-Click Quick Actions**: Preset prompts (*"What can this system do?"*, *"Explain current results"*).
-- 🖨️ **Print & Export Ready**: Native browser print styling isolates the diagnostic report for patient charts or PDF generation.
-- 🚀 **Zero-Build Architecture**: Can be opened directly via `file:///` double-click in any browser or served through any HTTP server.
+#### Multimodal Clinical Chat
+- **Endpoint:** `POST /chat`
+- **Description:** Grounded, bilingual (Arabic & English) clinical explanation of both patient biomarkers and chest radiograph findings.
+- **Safety Safeguard:** Requires explicit consent (`consent_to_send_health_data: true`) before analyzing profile or vision findings.
 
 ---
 
-### 4. 👁️ Computer Vision Diagnostics (Roadmap)
-**Status:** 🔬 In Development &bull; **Location:** [`models/`](models/) &bull; [`notebooks/`](notebooks/)
+## 🖥️ Modern Web Application (Frontend)
 
-An upcoming extension enabling automated imaging diagnostics:
-- **Modalities**: Chest Radiographs (X-Rays), Retinal Fundus Photography, Brain CT/MRI.
-- **Targets**: Cardiomegaly, pulmonary consolidation, diabetic retinopathy staging.
-- **Architecture**: Deep Convolutional Networks (ResNet, EfficientNet) & Vision Transformers (ViT).
+The frontend is a single-page application built with **Vue.js 3**, **Tailwind CSS**, and **Font Awesome 6**.
 
----
-
-## 🧪 Testing Presets Reference
-
-The frontend includes dual pre-calibrated sample profiles to demonstrate the predictive pipeline immediately:
-
-| Parameter | High-Risk Preset | Healthy Preset | Normal Reference |
-|:----------|:----------------:|:--------------:|:-----------------|
-| **Age** | 62 yrs | 32 yrs | Adult |
-| **Gender** | Female (2) | Male (1) | — |
-| **Height / Weight** | 162 cm / 92 kg | 178 cm / 72 kg | — |
-| **Calculated BMI** | **35.1 kg/m²** (Obese Class II) | **22.7 kg/m²** (Normal) | 18.5 – 24.9 kg/m² |
-| **Waist Circumference** | **108 cm** | 82 cm | < 88 (F) / < 102 (M) |
-| **HbA1c** | **7.2%** (Diabetic range) | 5.1% | < 5.7% |
-| **Fasting Glucose** | **145 mg/dL** | 88 mg/dL | 70 – 99 mg/dL |
-| **Total Cholesterol** | **240 mg/dL** | 175 mg/dL | < 200 mg/dL |
-| **HDL Cholesterol** | **35 mg/dL** (Low) | 58 mg/dL | > 40 (M) / > 50 (F) |
-| **Triglycerides** | **210 mg/dL** (High) | 95 mg/dL | < 150 mg/dL |
-| **LDL Cholesterol** | **160 mg/dL** (High) | 98 mg/dL | < 100 mg/dL |
-| **Smoking History** | Yes (1) | No (2) | Non-smoker |
-| **Sedentary Time** | **480 min/day** (8 hrs) | 180 min/day (3 hrs) | Minimally sedentary |
+### Highlights & Interface Views:
+1. **Clinical Landing Page (`Overview`)**:
+   - High-end medical hero section with gradient backdrops and pulse indicators.
+   - Dual-engine architecture overview and key telemetry counters (0.934 Peak AUROC, 0.807 Vision AUROC, 17 Biomarkers, 5 Thoracic Conditions).
+   - Instant "Launch Chest X-ray Vision" and "Launch Tabular Biomarker Suite" Call-to-Actions.
+2. **Predictive Tabular Health Suite**:
+   - 17 clinical input fields categorized by Demographics, Anthropometrics, Lab Panel, and Lifestyle.
+   - Instant **High-Risk** and **Healthy** pre-calibrated patient presets.
+   - Live WHO BMI classification and printable clinical report view.
+3. **Chest X-ray Diagnostic Suite**:
+   - Drag & drop image dropzone with real-time preview and file size validation.
+   - One-click sample test buttons: **Normal Baseline** & **Pathology Case**.
+   - Interactive **Grad-CAM Studio**:
+     - Toggle between **Overlay**, **Heatmap**, **Original**, and **Side-by-Side** views.
+     - Per-condition selector pills to inspect model focus across all 5 conditions.
+     - Condition risk cards showing detection badge, probability, and optimal F1 cutoff.
+4. **Floating AI Clinical Assistant**:
+   - Persistent across all views with bilingual Arabic (RTL) and English support.
 
 ---
 
@@ -279,188 +278,122 @@ The frontend includes dual pre-calibrated sample profiles to demonstrate the pre
 ```text
 MediVision-AI/
 ├── assets/
-│   ├── MediVision - AI.png          # Official project logo & branding emblem
-│   └── heart_disease.png            # 3D cardiovascular pathology medical illustration
+│   ├── MediVision - AI.png                    # Project branding logo
+│   ├── heart_disease.png                      # Cardiovascular medical illustration
+│   └── samples/
+│       ├── normal_chest_xray.png              # Normal baseline radiograph sample
+│       └── pathology_chest_xray.png           # Thoracic pathology radiograph sample
 ├── backend/
 │   ├── src/
 │   │   └── backend/
-│   │       └── __init__.py          # Python package scaffold
-│   ├── main.py                      # FastAPI REST microservice & prediction logic
-│   ├── pyproject.toml               # Project metadata & uv dependency spec (Python ≥3.13)
-│   ├── requirements.txt             # API runtime dependencies (FastAPI, Uvicorn, etc.)
-│   └── uv.lock                      # Deterministic dependency lock file
+│   │       ├── __init__.py                    # Backend package scaffold
+│   │       └── vision.py                      # DenseNet-121 inference & Grad-CAM engine
+│   ├── main.py                                # FastAPI REST microservice & static router
+│   ├── pyproject.toml                         # Project metadata & uv dependency spec
+│   ├── requirements.txt                       # Backend service runtime dependencies
+│   └── uv.lock                                # Dependency lock file
 ├── data/
-│   ├── raw/                         # Raw CDC NHANES .XPT files (14 survey modules)
-│   └── processed/                   # (Reserved) Cleaned, merged tabular clinical datasets
+│   ├── raw/                                   # CDC NHANES survey .XPT data
+│   └── processed/                             # Processed clinical datasets
 ├── frontend/
-│   └── index.html                   # Vue 3 + Tailwind CSS clinical dashboard (zero-build)
+│   └── index.html                             # Vue 3 + Tailwind CSS multimodal interface
 ├── models/
-│   ├── trained_models.joblib        # Serialized HistGradientBoosting models (6 diseases)
-│   └── selected_features.joblib     # Pre-selected training feature indices & names
+│   ├── trained_models.joblib                  # Serialized HistGradientBoosting models
+│   ├── selected_features.joblib               # Pre-selected tabular feature names
+│   └── chest_xray/
+│       ├── chest_xray_densenet121.pth         # PyTorch DenseNet-121 model weights
+│       ├── chest_xray_densenet121_metadata.json # Vision config & validation F1 thresholds
+│       └── chest_xray_densenet121_metrics.json  # Evaluation metrics on test set
 ├── notebooks/
-│   └── 01_MediVision_Predictive_Health_Analytics.ipynb  # Complete ML pipeline notebook
-├── reports/                         # (Reserved) Exploratory analysis reports
-├── start_backend.bat                # Windows quick launcher for the backend server
-├── requirements.txt                 # Core data science & ML pipeline dependencies
-├── .gitignore
-└── README.md                        # Project documentation (this file)
+│   ├── 01_MediVision_Predictive_Health_Analytics.ipynb # Tabular ML training pipeline
+│   ├── 02_MediVision_Chest_Xray_Vision_Pipeline.ipynb  # Chest X-ray vision pipeline (Kaggle)
+│   └── NOTEBOOK_GUIDE.md                      # Guide for training notebooks
+├── start_backend.bat                          # One-click Windows startup script
+├── requirements.txt                           # Full project requirements
+└── README.md                                  # Complete documentation
 ```
 
 ---
 
-## 🛠️ Complete Technology Stack
-
-| Domain | Technologies & Libraries |
-|:-------|:-------------------------|
-| **Data Engineering & ML** | Python 3.13+ &bull; scikit-learn &bull; pandas &bull; NumPy &bull; SciPy &bull; matplotlib &bull; seaborn &bull; XGBoost |
-| **Backend & Microservice** | FastAPI &bull; Uvicorn (ASGI) &bull; Pydantic &bull; joblib |
-| **Conversational AI** | Google Gemini (`gemini-3.8-flash` via `google-genai` SDK) |
-| **Frontend UI/UX** | Vue.js 3 &bull; Tailwind CSS &bull; Font Awesome 6 &bull; Google Fonts (*Inter*, *Poppins*) |
-| **Environment & Packaging** | Astral uv &bull; pyproject.toml |
-| **Data Standard** | CDC NHANES SAS Transport Format (`.xpt`) Cycle P (2017–2020) |
-| **Model Serialization** | joblib (`.joblib`) binary compression |
-
----
-
-## 🚀 Quickstart Guide
-
-Run the full MediVision-AI stack locally in minutes:
+## 🚀 Setup & Execution Guide
 
 ### Prerequisites
-- Python 3.13 or higher
-- [uv](https://docs.astral.sh/uv/) (recommended for fast package installation) or standard `pip`
+- Python 3.11+ (Python 3.13 recommended)
+- `uv` (recommended: `pip install uv`) or standard `pip`
 - Modern web browser (Chrome, Edge, Firefox, Safari)
 
 ---
 
-### Step 1: Clone the Repository & Setup Environment
+### Step 1: Clone Repository & Create Virtual Environment
 
 ```bash
 git clone https://github.com/aashour06/MediVision-AI.git
 cd MediVision-AI
-git switch feature/medivision-ai-chatbot
 
-# Create virtual environment with uv (or: python -m venv .venv)
+# Create virtual environment
 uv venv
+# Or with standard python: python -m venv .venv
 
-# Activate the virtual environment
-# On Windows (PowerShell):
+# Activate virtual environment
+# Windows (PowerShell):
 .venv\Scripts\Activate.ps1
-# On Windows (CMD):
+# Windows (CMD):
 .venv\Scripts\activate.bat
-# On macOS / Linux:
+# Linux/macOS:
 source .venv/bin/activate
+```
 
-# Install dependencies
-uv pip install -r requirements.txt
+---
+
+### Step 2: Install Dependencies
+
+```bash
+# Install backend and vision dependencies
 uv pip install -r backend/requirements.txt
 ```
 
 ---
 
-### Step 2: Generate the Model Artifacts (First Time Only)
+### Step 3: Configure Environment Variables (Optional)
 
-Ensure `models/trained_models.joblib` and `models/selected_features.joblib` are generated. Launch the notebook and run all cells:
-
+To enable the Google Gemini clinical chat assistant, create `backend/.env`:
 ```bash
-jupyter notebook notebooks/01_MediVision_Predictive_Health_Analytics.ipynb
+GEMINI_API_KEY="your-google-gemini-api-key"
 ```
-
-> **Automated Ingestion:** The notebook will automatically download the 14 CDC NHANES survey `.xpt` files on the first execution. Subsequent executions utilize the cached files in `data/raw/`.
 
 ---
 
-### Step 3: Launch the Backend Microservice
-
-**(Optional) Configure Gemini API Key for AI Chat:**
-
-You can create a `.env` file inside `backend/` (or copy `.env.example`):
-```bash
-# In backend/.env
-GEMINI_API_KEY="your-gemini-api-key"
-```
-
-Or set it in your terminal:
-```bash
-# On Windows (PowerShell):
-$env:GEMINI_API_KEY="your-gemini-api-key"
-
-# On Windows (CMD):
-set GEMINI_API_KEY=your-gemini-api-key
-
-# On macOS / Linux:
-export GEMINI_API_KEY="your-gemini-api-key"
-```
+### Step 4: Launch the Backend Service
 
 **Option A — Windows Quick Launcher:**
-```cmd
-start_backend.bat
-```
+Double-click `start_backend.bat` in the project root.
 
 **Option B — Direct Command:**
 ```bash
 cd backend
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-Verify service operation:
-- **API Status:** `http://localhost:8000/` &rarr; `{"message": "MediVision-AI API is running. Use /docs to view the API documentation."}`
-- **Interactive Documentation:** `http://localhost:8000/docs`
+Verify service is running:
+- **API Status:** `http://localhost:8000/`
+- **Swagger Documentation:** `http://localhost:8000/docs`
 
 ---
 
-### Step 4: Open the Clinical Dashboard
+### Step 5: Open the Application
 
-The frontend is completely zero-build and ready out of the box:
-
-1. Open `frontend/index.html` in your web browser (direct double-click).
-2. Alternatively, serve via Python's built-in web server:
-   ```bash
-   cd frontend
-   python -m http.server 3000
-   ```
-   and navigate to `http://localhost:3000`.
-3. Click the **"High-Risk"** or **"Healthy"** preset buttons, then click **"Generate Risk Report"** to view real-time risk stratification.
-4. Click the floating chat bubble in the bottom-right corner to interact with the **Bilingual AI Clinical Assistant** (English & Arabic) to ask clinical questions or receive AI explanations of the risk report.
+You can access the full MediVision AI application through either:
+1. **Direct Backend Delivery:** Navigate to `http://localhost:8000/app/` in your browser.
+2. **Direct Browser Open:** Double-click `frontend/index.html` directly from your file explorer.
 
 ---
 
-## 🔒 Privacy, Security & Data Governance
+## 🔒 Privacy, Security & Ethical Safeguards
 
-- 🔑 **Zero Key Exposure**: Never commit API keys or embed them into client-side code (`frontend/index.html`). Set `GEMINI_API_KEY` via server environment variables.
-- 🛡️ **Explicit Health Consent**: Biomarker telemetry is never transmitted to Google Gemini unless the user explicitly checks the consent control in the chat panel.
-- 🛑 **No Diagnostic Memory**: The backend is stateless; patient telemetry is processed ephemerally in-memory and is never logged to disk or persisted to databases.
-- ⚙️ **Secret Exclusions**: The root `.gitignore` strictly excludes `.env`, `*.log`, and environment credential artifacts.
-
----
-
-## ⚠️ Clinical Limitations & Ethical Safeguards
-
-- 📈 **Statistical Risk vs. Clinical Diagnosis**: Predictions reflect statistical likelihoods derived from population-level CDC NHANES survey cohorts. They do **not** constitute definitive clinical diagnoses.
-- 🫁 **Asthma Model Caveat**: As noted in our evaluation benchmark table, the Asthma predictive model achieves an AUC of 0.607, indicating limited standalone discriminative power compared to metabolic and cardiovascular targets.
-- 💊 **No Medical Prescription**: Neither the machine learning engine nor the Gemini conversational assistant is authorized or trained to prescribe medications, suggest dosages, or replace professional clinician consultation.
-- 🤖 **AI Hallucination Mitigation**: The Gemini system prompt explicitly bounds the assistant to verified server-side ML outputs and enforces bilingual medical guardrails.
-
----
-
-## 📚 Research & Pipeline Documentation
-
-- 📓 **[Interactive ML Pipeline Notebook](notebooks/01_MediVision_Predictive_Health_Analytics.ipynb)**: End-to-end Jupyter notebook covering data acquisition, merging of 14 NHANES survey modules, exploratory data analysis, HistGradientBoosting training with class balancing, ROC-AUC/PR-AUC evaluation, and model serialization.
-
----
-
-## 🔬 Data Provenance & Ethics
-
-All training data originates from the **National Health and Nutrition Examination Survey (NHANES)** conducted by the National Center for Health Statistics (NCHS), Centers for Disease Control and Prevention (CDC).
-- **Survey Cycle:** Pre-Pandemic 2017–March 2020 (Cycle P).
-- **Public Domain:** Data is publicly accessible at [wwwn.cdc.gov/nchs/nhanes](https://wwwn.cdc.gov/nchs/nhanes/).
-- **Ethical Use:** Used in compliance with NCHS data usage agreements for research and educational purposes.
-
----
-
-## ⚖️ Medical Disclaimer
-
-> **IMPORTANT:** MediVision-AI is an educational and clinical research demonstration developed for academic assessment. It is not an FDA-approved medical device, does not establish a doctor-patient relationship, and must never be used as a substitute for professional medical advice, diagnosis, or treatment.
+- 🔑 **No Key Exposure:** API keys are never bundled into frontend assets and remain strictly on the backend.
+- 🛡️ **Explicit Patient Consent:** Health data is only shared with the Gemini assistant when the user explicitly checks the consent control.
+- 🛑 **Stateless Ephemeral Processing:** Patient telemetry and radiograph images are processed strictly in-memory and are never stored or logged to disk.
+- ⚠️ **Assistive Clinical Scope:** Predictions and detections are statistical estimates designed to assist licensed clinicians and are not autonomous medical diagnoses.
 
 ---
 
